@@ -8,7 +8,6 @@ const {
 const {
 	clientId,
 	guildId,
-	token
 } = require('./config.json');
 
 const commands = [];
@@ -21,7 +20,7 @@ for (const file of commandFiles) {
 
 const rest = new REST({
 	version: '9'
-}).setToken(token);
+}).setToken(process.env.token);
 
 rest.put(Routes.applicationGuildCommands(clientId, guildId), {
 		body: commands
