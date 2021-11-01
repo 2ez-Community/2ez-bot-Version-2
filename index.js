@@ -5,9 +5,6 @@ const {
     Intents,
     MessageEmbed
 } = require('discord.js');
-const {
-    token
-} = require('./config.json');
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -95,4 +92,4 @@ client.on('guildMemberAdd', async member => {
 })
 */
 
-client.login(token);
+client.login(process.env.token);
