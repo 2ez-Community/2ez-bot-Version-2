@@ -1,4 +1,4 @@
-# 2ez Bot Version 2
+# 2ez Bot Version 2 !
 
 [![N|Solid](https://cdn.discordapp.com/icons/272733246792531968/a_d9533ac1614cf7f1c583485cbad9421a.png)](https://discord.gg/2ezcommunity)
 
