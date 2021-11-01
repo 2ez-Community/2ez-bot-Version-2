@@ -10,7 +10,6 @@ const {
 const {
 	clientId,
 	guildId,
-	token
 } = require('./config.json');
 
 const commands = [];
