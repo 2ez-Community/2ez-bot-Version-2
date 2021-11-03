@@ -31,7 +31,7 @@ module.exports = {
 
 			if (!interaction.member.permissions.has("MANAGE_ROLES")) {
 
-				if (interaction.channel.id !== "821393051561361493") {
+				if (interaction.channel.id !== "587956575315034114") {
 					let Bad_Channel_Embed = new MessageEmbed()
 						.setDescription(`> You can not use this command in this channel ${interaction.user}!`)
 						.setColor('RED')

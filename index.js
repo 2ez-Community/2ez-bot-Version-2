@@ -5,14 +5,21 @@ const {
     Intents,
     MessageEmbed
 } = require('discord.js');
+const {
+    token
+} = require('./config.json');
 
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
 
 const AvailableCommands = [
     "give",
-    "remove"
+    "remove",
+    "help",
+    "teams",
+    "ping",
 ]
 
 const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
@@ -41,15 +48,6 @@ client.on('interactionCreate', async interaction => {
 
     if (!command) return;
 
-    if (!AvailableCommands.includes(interaction.commandName)) {
-        console.log(interaction.commandName);
-        await interaction.reply({
-            content: 'This command is not out yet!',
-            ephemeral: true
-        });
-        return;
-    }
-
     try {
         await command.execute(interaction);
     } catch (error) {
@@ -61,6 +59,29 @@ client.on('interactionCreate', async interaction => {
     }
 
 });
+
+/*
+
+client.on('messageReactionAdd', async (reaction, user) => {
+	// When a reaction is received, check if the structure is partial
+	if (reaction.partial) {
+		// If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
+		try {
+			await reaction.fetch();
+		} catch (error) {
+			console.error('Something went wrong when fetching the message:', error);
+			// Return as `reaction.message.author` may be undefined/null
+			return;
+		}
+	}
+
+	// Now the message has been cached and is fully available
+	console.log(`${reaction.message.author.username}'s message "${reaction.message.content}" gained a reaction!`);
+	// The reaction is now also fully available and the properties will be reflected accurately:
+	console.log(`${reaction.count} user(s) have given the same reaction to this message!`);
+});
+*/
+
 
 client.on('messageCreate', message => {
     if (message.content === '*join') {
@@ -92,4 +113,4 @@ client.on('guildMemberAdd', async member => {
 })
 */
 
-client.login(process.env.token);
+client.login(token);
