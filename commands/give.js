@@ -108,12 +108,12 @@ module.exports = {
 		} catch (e) {
 
 			const errorembed = new MessageEmbed()
-
 				.setTitle('You ran into an Error!')
 				.setDescription('>' + " " + e)
 				.setFooter('/give < user > < role >')
 				.setColor('RED')
-			await interaction.reply({
+			
+				await interaction.reply({
 				content: "Something went wrong!",
 				embeds: [
 					errorembed

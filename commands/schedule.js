@@ -219,7 +219,7 @@ module.exports = {
 
 		const NotAbleToReactEmbed = new MessageEmbed()
 			//eligible
-			.setDescription(`> Your User ID does not appear on the following list: !**Check_User_ID_Array** `)
+			.setDescription(`> Your User ID does not appear on the following list: **Check_User_ID_Array** `)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const NotAbleToDeleteEmbed = new MessageEmbed()
@@ -231,7 +231,7 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 				.setCustomId('ButYes')
-				.setEmoji('\<:2ez_yes:892497964243779604>')
+				.setEmoji('<:2ez_yes:892497964243779604>')
 				.setStyle('SECONDARY'),
 			)
 			.addComponents(
@@ -251,6 +251,7 @@ module.exports = {
 				.setCustomId('ButEdit')
 				.setLabel('Edit')
 				.setStyle("PRIMARY")
+				.setDisabled(true)
 			)
 			.addComponents(
 				new MessageButton()
@@ -259,14 +260,7 @@ module.exports = {
 				.setStyle("DANGER")
 			)
 
-
 		await interaction.reply(`Here is your schedule for the following users: ${MentionMessage}.`).then(
-
-			await interaction.channel.send(`Fetching User Info and Data...`).then(sentMessage => {
-				sentMessage.delete({
-					timeout: 3000
-				})
-			}),
 
 			interaction.channel.send({
 				embeds: [
@@ -728,7 +722,6 @@ module.exports = {
 							})
 							return;
 						}
-
 
 						sentMessage.delete().catch(() => {
 

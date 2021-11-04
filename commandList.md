@@ -12,4 +12,4 @@
 
 - rules - Status : DONE ⭐
 
-- schedule : In work
+- schedule : DONE ⭐
