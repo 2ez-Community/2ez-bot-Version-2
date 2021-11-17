@@ -15,33 +15,41 @@ module.exports = {
         let HelpembedDescContent =
             "**Commands:** \n \n" +
 
-            "`*give @user @role` - Give a role to someone. **[Specific Channel required]** \n \n" +
+            "`/schedule` -Create a schedule to let your mates show if they are available! \n \n" +
 
-            "`*remove @user @role` - Remove a role from someone. **[Specific Channel required]** \n \n" +
+            "`/schedulepreset` -Load a schedule which has been saved by you! \n \n" +
 
-            "`*plan [time]` - Plan a Pick up Game -> **This is not publicly available yet!** \n \n" +
+            "`/give` - Give a role to someone. \n \n" +
 
-            "`*poll [suggestion]` - An easy way to let people vote.\n \n" +
+            "`/remove` - Remove a role from someone. \n \n" +
 
-            "`*teams` - Get an overview of all 2ez Overwatch Teams. \n \n" +
-
-            "`*info` - 2ez Summer games Countdown \n \n " +
-
-            "`*members` - Quick Membercount of 2ez \n \n" +
+            "`/teams` - Get an overview of all 2ez Overwatch Teams. \n \n" +
 
             "More to come... \n \n" +
 
-            "`2ez Bot` is an open source Discord Bot developed by Marwin and Turbo. \n \n" +
+            "The old `2ez Bot` (*help) features more commands! \n \n" +
 
-            "Github Repository : [Click here](https://github.com/2ez-Community/2ez-bot)";
+            "`2ez Bot V2` is an open source Discord Bot developed by Marwin and Turbo. \n \n" +
+
+            "Github Repository : [Click here](https://github.com/2ez-Community/2ez-bot-Version-2)";
+
+        let SupportEmbedDescContent =
+            " This Bot is made possible due to our amazing donators! \n \n" +
+            "Thank you `MidoriRyuu#1222` and `hjortsater#0890` \n \n" +
+            "Thank you for being awesome! ❤";
 
         const helpembed = new MessageEmbed()
             .setTitle('2ez Discord Bot')
             .setDescription(HelpembedDescContent)
             .setColor('BLUE')
 
+        const supportEmbed = new MessageEmbed()
+            .setTitle('One more thing!')
+            .setDescription(SupportEmbedDescContent)
+            .setColor('RED')
+
         await interaction.user.send({
-            embeds: [helpembed]
+            embeds: [helpembed, supportEmbed]
         });
 
         interaction.reply({

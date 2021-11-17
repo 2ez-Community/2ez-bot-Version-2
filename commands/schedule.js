@@ -1,6 +1,7 @@
 const {
 	SlashCommandBuilder
 } = require('@discordjs/builders');
+const exp = require('constants');
 
 const {
 	MessageActionRow,
@@ -240,8 +241,9 @@ module.exports = {
 
 		}
 
-		// ⬇ Description of the embed
+		console.log('Exported name!');
 
+		// ⬇ Description of the embed
 		let UserMessages = ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString();
 		let team = `${interaction.channel.parent.name}`; // get category name
 
@@ -778,11 +780,11 @@ module.exports = {
 
 					if (i.customId === "ButEdit") {
 
-						if (!Check_User_Array.includes(i.user.username)) {
+						if (i.user.id !== interaction.member.user.id) {
 							i.reply({
-								content: "You are not able to react here!",
+								content: "You are not able to use this!",
 								embeds: [
-									NotAbleToReactEmbed
+									NotAbleToDeleteEmbed
 								],
 								ephemeral: true
 							})
@@ -801,12 +803,19 @@ module.exports = {
 
 						const NewScheduleData = {
 							ScheduleCreator: `${interaction.member}`,
+							ScheduleCreatorID: `${interaction.member.user.id}`,
 							userOneJson: `${userOne}`,
+							userOneIDJson: `${userOne.user.id}`,
 							userSecondJson: `${userSecond}`,
+							userSecondIDJson: `${userSecond.user.id}`,
 							userThirdJson: `${userThird}`,
+							userThirdIDJson: `${userThird.user.id}`,
 							userFourthJson: `${userFourth}`,
+							userFourthIDJson: `${userFourth.user.id}`,
 							userFithJson: `${userFith}`,
+							userFithIDJson: `${userFith.user.id}`,
 							userSixthJson: `${userSixth}`,
+							userSixthIDJson: `${userSixth.user.id}`,
 							userSeventhJson: `${userSeventh}`,
 							userEighthJson: `${userEighth}`,
 							ScrimDescriptonJson: `${ScrimDescripton}`
@@ -822,7 +831,7 @@ module.exports = {
 							`Fourth User: ${userFourth}` + "\n" +
 							`Fith User: ${userFith}` + "\n" +
 							`Sixth User: ${userSixth}` + "\n" + "\n" +
-							`You can use this to send a preset schedule next time :)` + "\n" + "\n" +
+							`If you use /schedulepreset now, this will be your schedule!` + "\n" + "\n" +
 							`🥰 Your 2ez Bot!` + "\n" + "\n" +
 							`Your File: **Schedule_${interaction.channel.parent.name}.json**` + "\n" +
 							`Access: **${interaction.channel.parent.name}** through **${interaction.member.user.username}**`
@@ -837,7 +846,10 @@ module.exports = {
 
 							} else {
 
-								await i.reply(`Your Data has been saved!`);
+								await i.reply({
+									content: `Your data has been saved successfully. Your file: **${interaction.channel.parent.name}.json**. For more info, check your DMs!`,
+									ephemeral: true
+								});
 								console.log(`Saved Schedule Data in: Schedule_${interaction.channel.parent.name}.json`);
 
 								i.user.send(JSONuserMessage).catch((e) => {
@@ -851,7 +863,6 @@ module.exports = {
 						})
 
 						/*
-
 						const MessageFilter = m => m.author.id === i.user.id;
 						const MessageCollector = sentMessage.channel.createMessageCollector({
 							MessageFilter,
