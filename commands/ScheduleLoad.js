@@ -141,8 +141,26 @@ module.exports = {
 					User_Fourth_Array.push(`${neutralEmoji} ${data.userFourthJson}`);
 					User_Fith_Array.push(`${neutralEmoji} ${data.userFithJson}`);
 					User_Sixth_Array.push(`${neutralEmoji} ${data.userSixthJson}`);
-					User_Seventh_Array.push(`-`);
-					User_Eighth_Array.push(`-`);
+
+					if (data.userSeventhJson === "null") {
+
+						User_Seventh_Array.push("-");
+
+					} else {
+
+						User_Seventh_Array.push(`${neutralEmoji} ${data.userSeventhJson}`);
+
+					}
+
+					if (data.userEighthJson === "null") {
+
+						User_Eighth_Array.push("-");
+
+					} else {
+
+						User_Eighth_Array.push(`${neutralEmoji} ${data.userEighthJson}`);
+
+					}
 
 					console.log('Users Push complete');
 
@@ -159,7 +177,13 @@ module.exports = {
 
 					console.log(`Users which are able to react: ${Check_User_Array}`);
 
-					let UserMessages = ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString();
+					let UserMessages = ScrimDescripton.toString() + "\n" + "\n" +
+						User_One_Array.toString() + "\n" + "\n" +
+						User_Second_Array.toString() + "\n" + "\n" +
+						User_Third_Array.toString() + "\n" + "\n" +
+						User_Fourth_Array.toString() + "\n" + "\n" +
+						User_Fith_Array.toString() + "\n" + "\n" +
+						User_Sixth_Array.toString();
 
 					const ScheduleEmbed = new MessageEmbed()
 						.setTitle(`${team}'s Schedule`)
@@ -329,7 +353,7 @@ module.exports = {
 
 									const ScheduleEdit = new MessageEmbed()
 										.setTitle(`${team}'s Schedule`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
+										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
 										.setColor('GREEN')
 										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
 										.setTimestamp()
@@ -446,7 +470,7 @@ module.exports = {
 
 									const ScheduleEdit = new MessageEmbed()
 										.setTitle(`${team}'s Schedule`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
+										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
 										.setColor('DARK_RED')
 										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
 										.setTimestamp()
@@ -563,7 +587,7 @@ module.exports = {
 
 									const ScheduleEdit = new MessageEmbed()
 										.setTitle(`${team}'s Schedule`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
+										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
 										.setColor('BLURPLE')
 										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
 										.setTimestamp()

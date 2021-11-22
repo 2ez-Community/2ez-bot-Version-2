@@ -163,7 +163,7 @@ module.exports = {
 
 			} else {
 
-				User_Third_Array.push('-')
+				User_Third_Array.push('-');
 
 			};
 
@@ -238,13 +238,31 @@ module.exports = {
 				ephemeral: true
 			})
 			console.log(e);
+			return;
 
 		}
 
 		console.log('Exported name!');
 
 		// ⬇ Description of the embed
-		let UserMessages = ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString();
+		let UserMessages = ScrimDescripton.toString() + "\n" + "\n" +
+
+			User_One_Array.toString() + "\n" + "\n" +
+
+			User_Second_Array.toString() + "\n" + "\n" +
+
+			User_Third_Array.toString() + "\n" + "\n" +
+
+			User_Fourth_Array.toString() + "\n" + "\n" +
+
+			User_Fith_Array.toString() + "\n" + "\n" +
+
+			User_Sixth_Array.toString() + "\n" + "\n" +
+
+			User_Seventh_Array.toString() + "\n" + "\n" +
+
+			User_Eighth_Array.toString();
+
 		let team = `${interaction.channel.parent.name}`; // get category name
 
 		const ScheduleEmbed = new MessageEmbed()
@@ -794,7 +812,7 @@ module.exports = {
 						if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
 
 							i.reply({
-								content: "You can only save a schedule when it features at least `6 people`!",
+								content: "You can only save a schedule if it features at least `6 people`!",
 								ephemeral: true
 							});
 							return;
@@ -816,9 +834,8 @@ module.exports = {
 							userFithIDJson: `${userFith.user.id}`,
 							userSixthJson: `${userSixth}`,
 							userSixthIDJson: `${userSixth.user.id}`,
-							userSeventhJson: `${userSeventh}`,
-							userEighthJson: `${userEighth}`,
 							ScrimDescriptonJson: `${ScrimDescripton}`
+
 						}
 
 						let JSONuserMessage =

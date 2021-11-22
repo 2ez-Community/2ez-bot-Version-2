@@ -35,7 +35,7 @@ module.exports = {
 
         let SupportEmbedDescContent =
             " This Bot is made possible due to our amazing donators! \n \n" +
-            "Thank you `MidoriRyuu#1222` and `hjortsater#0890` \n \n" +
+            "Thank you `Shadowss#5513`, `MidoriRyuu#1222` and `hjortsater#0890` \n \n" +
             "Thank you for being awesome! ❤";
 
         const helpembed = new MessageEmbed()
