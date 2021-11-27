@@ -76,24 +76,28 @@ module.exports = {
 
 		const DidntFindSchedule = new MessageEmbed()
 			.setDescription(`Error / ID : FILE_NOT_FOUND / 1 - Critical Error`)
-			.setColor('DARK_BUT_NOT_BLACK')
+			.setColor('DARK_BUT_NOT_BLACK');
 
 		const DidntDeleteSchedulePreset = new MessageEmbed()
 			.setDescription(`> It looks like your an into an error!`)
 			.setFooter(`Couldn't find a file called ${interaction.channel.parent.name}.json!`)
-			.setColor('DARK_BUT_NOT_BLACK')
+			.setColor('DARK_BUT_NOT_BLACK');
 
 		const DeletedSchedulePreset = new MessageEmbed()
 			.setDescription(`> Your Preset has been deleted!`)
-			.setFooter(`Deleted: ${interaction.channel.parent.name}.json!`)
+			.setFooter(`Deleted: ${interaction.channel.parent.name}.json!`);
 
 		const NotAbleToReactEmbed = new MessageEmbed()
 			//eligible
 			.setDescription(`> Your User ID does not appear on the following list: **Check_User_ID_Array** `)
-			.setColor('DARK_BUT_NOT_BLACK')
+			.setColor('DARK_BUT_NOT_BLACK');
 
 		const NotAbleToDeleteEmbed = new MessageEmbed()
 			.setDescription(`> Only the creator of the schedule, ${interaction.member.user.username}, can use this! `)
+			.setColor('DARK_BUT_NOT_BLACK');
+
+		const OnlyScheduleCreatorEmbed = new MessageEmbed()
+			.setDescription(`This is only available to the person who saved the schedule!`)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const SuccesfullyEditedEmbed = new MessageEmbed()
@@ -144,7 +148,7 @@ module.exports = {
 
 					if (data.userSeventhJson === "null") {
 
-						User_Seventh_Array.push("-");
+						User_Seventh_Array.push("");
 
 					} else {
 
@@ -154,7 +158,7 @@ module.exports = {
 
 					if (data.userEighthJson === "null") {
 
-						User_Eighth_Array.push("-");
+						User_Eighth_Array.push("");
 
 					} else {
 
@@ -342,8 +346,8 @@ module.exports = {
 
 										if (i.member.user.id == data.userSixthIDJson) {
 
-											//User_Sixth_Array.pop();
-											User_Sixth_Array.push(`${yesEmoji} ${userSixthJson}`)
+											User_Sixth_Array.pop();
+											User_Sixth_Array.push(`${yesEmoji} ${data.userSixthJson}`)
 
 										}
 
@@ -460,7 +464,7 @@ module.exports = {
 										if (i.member.user.id == data.userSixthIDJson) {
 
 											User_Sixth_Array.pop();
-											User_Sixth_Array.push(`${noEmoji} ${userSixthJson}`)
+											User_Sixth_Array.push(`${noEmoji} ${data.userSixthJson}`)
 
 										}
 
@@ -577,7 +581,7 @@ module.exports = {
 										if (i.member.user.id == data.userSixthIDJson) {
 
 											User_Sixth_Array.pop();
-											User_Sixth_Array.push(`${tentativeEmoji} ${userSixthJson}`)
+											User_Sixth_Array.push(`${tentativeEmoji} ${data.userSixthJson}`)
 
 										}
 
@@ -615,11 +619,11 @@ module.exports = {
 
 								if (i.customId === "ButDestroyP") {
 
-									if (i.user.id !== interaction.member.user.id) {
+									if (i.user.id !== data.ScheduleCreatorID) {
 										i.reply({
 											content: "You are not able to use this!",
 											embeds: [
-												NotAbleToDeleteEmbed
+												OnlyScheduleCreatorEmbed
 											],
 											ephemeral: true
 										})

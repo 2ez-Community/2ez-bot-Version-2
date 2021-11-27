@@ -20,9 +20,9 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedule')
 
-		.setDescription('Create a Team schedule! This allows you to mention 6 people!')
+		.setDescription('Create a Team schedule! This allows you to mention 8 people!')
 
-		.addUserOption(option => option.setName('user-one').setDescription('Add a user to mention in the schedule!'))
+		.addUserOption(option => option.setName('user-one').setDescription('Add a user to mention in the schedule!').setRequired(true))
 
 		.addUserOption(option => option.setName('user-second').setDescription('Add a user to mention in the schedule!'))
 
@@ -139,7 +139,7 @@ module.exports = {
 
 				// else, push in a "-"
 
-				User_One_Array.push('-')
+				User_One_Array.push('')
 
 			};
 
@@ -151,7 +151,7 @@ module.exports = {
 
 			} else {
 
-				User_Second_Array.push('-')
+				User_Second_Array.push('')
 
 			};
 
@@ -163,7 +163,7 @@ module.exports = {
 
 			} else {
 
-				User_Third_Array.push('-');
+				User_Third_Array.push('');
 
 			};
 
@@ -175,7 +175,7 @@ module.exports = {
 
 			} else {
 
-				User_Fourth_Array.push('-')
+				User_Fourth_Array.push('')
 
 			};
 
@@ -187,7 +187,7 @@ module.exports = {
 
 			} else {
 
-				User_Fith_Array.push('-')
+				User_Fith_Array.push('')
 
 			};
 
@@ -199,7 +199,7 @@ module.exports = {
 
 			} else {
 
-				User_Sixth_Array.push('-')
+				User_Sixth_Array.push('')
 
 			};
 
@@ -211,7 +211,7 @@ module.exports = {
 
 			} else {
 
-				User_Seventh_Array.push('-')
+				User_Seventh_Array.push('')
 
 			};
 
@@ -223,7 +223,7 @@ module.exports = {
 
 			} else {
 
-				User_Eighth_Array.push('-')
+				User_Eighth_Array.push('')
 
 			};
 
@@ -835,7 +835,6 @@ module.exports = {
 							userSixthJson: `${userSixth}`,
 							userSixthIDJson: `${userSixth.user.id}`,
 							ScrimDescriptonJson: `${ScrimDescripton}`
-
 						}
 
 						let JSONuserMessage =
