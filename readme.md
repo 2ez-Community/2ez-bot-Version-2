@@ -17,7 +17,7 @@
 
 - Create an easy to use schedule to let your teammates show if they are available or not!
 - Give and remove roles with a simple to use command.
-- All other commands will come out soon!
+And much more...
 
 # 👨‍💻 Tech
 
