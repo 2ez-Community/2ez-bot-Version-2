@@ -15,13 +15,6 @@ module.exports = {
 
 	async execute(interaction) {
 
-		/*		
-		const Ceo = interaction.member.roles.cache.some(role => role.name === "CEO");
-		const AdminRole = interaction.member.roles.cache.some(role => role.name === "Admin");
-		const C_Rep = interaction.member.roles.cache.some(role => role.name === "Community Rep");
-		const Game_Admin = interaction.member.roles.cache.some(role => role.name === "Game Admin");
-		*/
-
 		try {
 
 			const Member = interaction.options.getMember('user');
@@ -44,15 +37,23 @@ module.exports = {
 						ephemeral: true
 					})
 					return;
-				}
+				};
 
-			}
+			};
+
 
 			if (!interaction.member.permissions.has("MANAGE_ROLES")) {
 
+				console.log(`Didnt have Perms!`);
+
 				if (!interaction.member.roles.cache.some(role => role.name === "Game Admin")) {
 
+					console.log(`Wasnt a Game Admin`);
+
 					if (!interaction.member.roles.cache.some(role => role.name === Role.name)) {
+
+						console.log('Didnt have Role!');
+
 						let DontOwnRoleEmbed = new MessageEmbed()
 							.setDescription(`> You tried to give ${Role}!`)
 							.setColor('RED')
@@ -63,10 +64,30 @@ module.exports = {
 								DontOwnRoleEmbed
 							],
 						})
+						console.log(`Returned ${interaction.member.user.username}'s request!`);
 						return;
 					}
 				}
 			}
+
+
+
+			if (Member.user.id === "902277719180578867") {
+
+				const NotThisUserEmbed = new MessageEmbed()
+					.setDescription(`You cant give roles to the 2ez Bot!`)
+					.setColor('RED')
+
+				interaction.reply({
+					content: 'You are not able to give Roles to that User!',
+					embeds: [
+						NotThisUserEmbed
+					],
+				});
+				return;
+
+			};
+
 
 			if (AlreadyHasMentionedRole) {
 				let AlreadyHasMentionedRoleEmbed = new MessageEmbed()
@@ -78,7 +99,6 @@ module.exports = {
 					embeds: [
 						AlreadyHasMentionedRoleEmbed
 					],
-					ephemeral: true
 				})
 				return;
 			}
@@ -112,8 +132,8 @@ module.exports = {
 				.setDescription('>' + " " + e)
 				.setFooter('/give < user > < role >')
 				.setColor('RED')
-			
-				await interaction.reply({
+
+			await interaction.reply({
 				content: "Something went wrong!",
 				embeds: [
 					errorembed

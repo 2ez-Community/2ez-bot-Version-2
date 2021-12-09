@@ -18,6 +18,7 @@ module.exports = {
             .setTitle('All 2ez Teams:')
             .addField('<:CritFarmers:869630471892516874> 2ez CritFarmers', '4500 <:grandmaster:829021760514031687>')
             .addField('<:Ethereal:850546276344135700> 2ez Ethereal', '4400 <:grandmaster:829021760514031687>')
+            .addField('<:Kappybara:906576313568071710> 2ez Kappybara', '4200 <:grandmaster:829021760514031687>')
             .addField('<:ChickenContendies:837356394688282695> Chicken Contendies', '4200 <:grandmaster:829021760514031687>')
             .addField('<:VaeVictis:833644847360507905> Vae Victis', '4200 <:grandmaster:829021760514031687>')
             .addField('<:VaeVictisAcademy:852605496858640384> Vae Victis Academy', '4000 <:grandmaster:829021760514031687>')
