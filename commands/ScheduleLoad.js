@@ -15,6 +15,10 @@ const {
 
 const fs = require('fs');
 
+const Epoch_Time_Preset = Math.floor(new Date().getTime() / 1000.0);
+
+//This code has been written by me, Marwin!
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('schedulepreset')
@@ -22,6 +26,18 @@ module.exports = {
 		.setDescription('Send a preset schedule! This will only work if you have saved a schedule yet!'),
 
 	async execute(interaction) {
+
+		// if (interaction.member.id !== "420277395036176405") {
+
+		// 	interaction.reply({
+		// 		content: "This command is currently unavailable!",
+		// 		ephemeral: true
+		// 	});
+
+		// 	return;
+
+		// }
+
 
 		let Check_User_Array = [
 
@@ -190,7 +206,7 @@ module.exports = {
 						User_Sixth_Array.toString();
 
 					const ScheduleEmbed = new MessageEmbed()
-						.setTitle(`${team}'s Schedule`)
+						.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
 						.setDescription(UserMessages)
 						.setColor('GREYPLE')
 						.setFooter(`Created by ${interaction.member.user.username} | This is a preset / saved schedule!`)
@@ -356,7 +372,7 @@ module.exports = {
 									}
 
 									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule`)
+										.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
 										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
 										.setColor('GREEN')
 										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -368,12 +384,7 @@ module.exports = {
 										],
 									});
 
-									i.reply({
-										embeds: [
-											SuccesfullyEditedEmbed
-										],
-										ephemeral: true
-									});
+									i.deferUpdate()
 
 								}
 
@@ -473,7 +484,7 @@ module.exports = {
 									}
 
 									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule`)
+										.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
 										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
 										.setColor('DARK_RED')
 										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -485,12 +496,8 @@ module.exports = {
 										],
 									});
 
-									i.reply({
-										embeds: [
-											SuccesfullyEditedEmbed
-										],
-										ephemeral: true
-									});
+									i.deferUpdate();
+									// interaction.deferUpdate();
 
 								}
 
@@ -590,7 +597,7 @@ module.exports = {
 									}
 
 									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule`)
+										.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
 										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
 										.setColor('BLURPLE')
 										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -602,12 +609,7 @@ module.exports = {
 										],
 									});
 
-									i.reply({
-										embeds: [
-											SuccesfullyEditedEmbed
-										],
-										ephemeral: true
-									});
+									i.deferUpdate()
 
 								}
 
@@ -737,6 +739,12 @@ module.exports = {
 										console.log('Error ID: 10');
 
 									});
+
+									interaction.deleteReply().catch(() => {
+
+										console.log('Error ID: 11');
+
+									})
 
 									i.reply({
 										content: 'Everything has been deleted!',

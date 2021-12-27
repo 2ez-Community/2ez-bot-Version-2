@@ -1,7 +1,6 @@
 const {
 	SlashCommandBuilder
 } = require('@discordjs/builders');
-const exp = require('constants');
 
 const {
 	MessageActionRow,
@@ -15,6 +14,10 @@ const {
 } = require('discord.js');
 
 const fs = require('fs');
+
+const Epoch_Time = Math.floor(new Date().getTime() / 1000.0);
+
+//This code has been written by me, Marwin!
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -41,6 +44,17 @@ module.exports = {
 		.addStringOption(option => option.setName('description').setDescription('This will be the description of your schedule!')),
 
 	async execute(interaction) {
+
+		// if (interaction.member.id !== "420277395036176405") {
+
+		// 	interaction.reply({
+		// 		content: "This command is currently unavailable!",
+		// 		ephemeral: true
+		// 	});
+
+		// 	return;
+
+		// }
 
 		let Check_User_Array = [
 
@@ -266,7 +280,7 @@ module.exports = {
 		let team = `${interaction.channel.parent.name}`; // get category name
 
 		const ScheduleEmbed = new MessageEmbed()
-			.setTitle(`${team}'s Schedule`)
+			.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
 			.setDescription(UserMessages)
 			.setColor('GREYPLE')
 			.setFooter(`Created by ${interaction.member.user.username}`)
@@ -342,7 +356,7 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
-				const editcollector = sentMessage.createMessageComponentCollector({
+				const savecollector = sentMessage.createMessageComponentCollector({
 					componentType: 'BUTTON'
 				});
 
@@ -470,7 +484,7 @@ module.exports = {
 						}
 
 						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule`)
+							.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
 							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
 							.setColor('GREEN')
 							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -482,15 +496,7 @@ module.exports = {
 							],
 						});
 
-						i.reply({
-
-							content: "Changed your availability!",
-							embeds: [
-								SuccesfullyEditedEmbed
-							],
-							ephemeral: true
-
-						});
+						i.deferUpdate()
 
 					}
 
@@ -617,7 +623,7 @@ module.exports = {
 
 
 						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule`)
+							.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
 							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
 							.setColor('RED')
 							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -629,15 +635,7 @@ module.exports = {
 							],
 						});
 
-						i.reply({
-
-							content: "Changed your availability!",
-							embeds: [
-								SuccesfullyEditedEmbed
-							],
-							ephemeral: true
-
-						});
+						i.deferUpdate()
 
 					}
 
@@ -763,7 +761,7 @@ module.exports = {
 						}
 
 						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule`)
+							.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
 							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
 							.setColor('BLURPLE')
 							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -775,21 +773,13 @@ module.exports = {
 							],
 						});
 
-						i.reply({
-
-							content: "Changed your availability!",
-							embeds: [
-								SuccesfullyEditedEmbed
-							],
-							ephemeral: true
-
-						});
+						i.deferUpdate()
 
 					}
 
 				});
 
-				editcollector.on('collect', async i => {
+				savecollector.on('collect', async i => {
 
 					const ReadytoCollectMessagesEmbed = new MessageEmbed()
 						.setDescription(`I am now waiting for your next message!`)
@@ -812,7 +802,7 @@ module.exports = {
 						if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
 
 							i.reply({
-								content: "You can only save a schedule if it features at least `6 people`!",
+								content: "You can only save a schedule that features at least `6 people`!",
 								ephemeral: true
 							});
 							return;
@@ -834,7 +824,8 @@ module.exports = {
 							userFithIDJson: `${userFith.user.id}`,
 							userSixthJson: `${userSixth}`,
 							userSixthIDJson: `${userSixth.user.id}`,
-							ScrimDescriptonJson: `${ScrimDescripton}`
+							ScrimDescriptonJson: `${ScrimDescripton}`,
+							InteractionChannelJson: `${interaction.channel}`
 						}
 
 						let JSONuserMessage =
@@ -877,110 +868,6 @@ module.exports = {
 							}
 
 						})
-
-						/*
-						const MessageFilter = m => m.author.id === i.user.id;
-						const MessageCollector = sentMessage.channel.createMessageCollector({
-							MessageFilter,
-							time: 30000
-						});
-
-						
-						i.reply({
-							content: `Alrigth ${i.user.username}, what do you want the new description to be?`,
-							embeds: [
-								ReadytoCollectMessagesEmbed
-							],
-							ephemeral: true
-							
-
-						await i.user.send({
-								embeds: [
-									MessageEditChoiceEmbed
-								]
-							}),
-
-							i.reply({
-
-								content: "I sent a message into your DMs!",
-								ephemeral: true
-
-							}).then(
-
-								MessageCollector.on('collect', m => {
-
-									if (m.author.id !== i.user.id) return;
-
-									try {
-
-										ScrimDescripton.pop()
-
-									} catch {
-
-										i.channel.send({
-											content: "Something didn't work when trying to delete the old description!",
-											ephemeral: true
-										})
-										return;
-
-									}
-
-									try {
-
-										ScrimDescripton.push(m.content);
-
-									} catch {
-
-										i.channel.send({
-											content: "Something didn't work when tring to update the description!",
-											ephemeral: true
-										})
-										return;
-
-									}
-
-									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
-										.setColor('DARK_BUT_NOT_BLACK')
-										.setFooter(`Created by ${interaction.member.user.username} | Edited by ${i.user.tag}`)
-										.setTimestamp()
-
-									try {
-
-										sentMessage.edit({
-											embeds: [
-												ScheduleEdit
-											],
-										});
-
-										MessageCollector.time = 0;
-
-									} catch {
-
-										const ErrorEmbed = new MessageEmbed()
-											.setDescription('Error: `BAD_INTERACTION_PUSH / 8` - Contact the Dev if you see this!')
-											.setColor('RED')
-
-										i.channel.send({
-											embeds: [
-												ErrorEmbed
-											]
-										})
-
-									}
-
-									m.delete().catch(() => {
-
-										console.log('Something went wrong when trying to delete the users new description!');
-										return;
-
-									})
-
-								})
-
-							)
-							*/
 
 					}
 
@@ -1049,6 +936,12 @@ module.exports = {
 							console.log('Error ID: 10');
 
 						});
+
+						interaction.deleteReply().catch(() => {
+
+							console.log('Error ID: 11 | Interaction could not be deleted!');
+
+						})
 
 						i.reply({
 							content: 'Everything has been deleted!',
