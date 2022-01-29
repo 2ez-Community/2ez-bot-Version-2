@@ -15,8 +15,6 @@ const {
 
 const fs = require('fs');
 
-const Epoch_Time = Math.floor(new Date().getTime() / 1000.0);
-
 //This code has been written by me, Marwin!
 
 module.exports = {
@@ -134,10 +132,10 @@ module.exports = {
 
 		}
 
-		let yesEmoji = "<:2ez_yes:892497964243779604>";
-		let noEmoji = "<:2ez_no:892498012000096306>";
+		let yesEmoji = "<:2ez_Schedule_Yes:933802728130494524>";
+		let noEmoji = "<:2ez_Schedule_No:933803257120313406>";
 		let neutralEmoji = "<:2ez_neutral:892794587712745543>";
-		let tentativeEmoji = "<:2ez_tentative:892800624754823228>";
+		let tentativeEmoji = "<:2ez_Schedule_tentative:933802728138899556>";
 
 		try { //Push in every user + their emoji in their personal array
 
@@ -256,8 +254,6 @@ module.exports = {
 
 		}
 
-		console.log('Exported name!');
-
 		// ⬇ Description of the embed
 		let UserMessages = ScrimDescripton.toString() + "\n" + "\n" +
 
@@ -280,7 +276,7 @@ module.exports = {
 		let team = `${interaction.channel.parent.name}`; // get category name
 
 		const ScheduleEmbed = new MessageEmbed()
-			.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
+			.setTitle(`${team}'s Schedule`)
 			.setDescription(UserMessages)
 			.setColor('GREYPLE')
 			.setFooter(`Created by ${interaction.member.user.username}`)
@@ -292,7 +288,7 @@ module.exports = {
 
 		const NotAbleToReactEmbed = new MessageEmbed()
 			//eligible
-			.setDescription(`> Your User ID does not appear on the following list: **Check_User_ID_Array** `)
+			.setDescription(`> Your User ID doesn't appear on the following list: **MESSAGE_MENTION_ARRAY_** `)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const NotAbleToDeleteEmbed = new MessageEmbed()
@@ -304,26 +300,26 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 				.setCustomId('ButYes')
-				.setEmoji('<:2ez_yes:892497964243779604>')
+				.setEmoji('<:2ez_Schedule_Yes:933802728130494524>')
 				.setStyle('SECONDARY'),
 			)
 			.addComponents(
 				new MessageButton()
 				.setCustomId('ButNo')
-				.setEmoji('<:2ez_no:892498012000096306>')
+				.setEmoji('<:2ez_Schedule_No:933803257120313406>')
 				.setStyle('SECONDARY'),
 			)
 			.addComponents(
 				new MessageButton()
 				.setCustomId('ButIdk')
-				.setEmoji('<:2ez_tentative:892800624754823228>')
+				.setEmoji('<:2ez_Schedule_tentative:933802728138899556>')
 				.setStyle('SECONDARY'),
 			)
 			.addComponents(
 				new MessageButton()
 				.setCustomId('ButEdit')
 				.setLabel('Save')
-				.setStyle("PRIMARY")
+				.setStyle("SUCCESS")
 			)
 			.addComponents(
 				new MessageButton()
@@ -484,7 +480,7 @@ module.exports = {
 						}
 
 						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
+							.setTitle(`${team}'s Schedule`)
 							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
 							.setColor('GREEN')
 							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -623,7 +619,7 @@ module.exports = {
 
 
 						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
+							.setTitle(`${team}'s Schedule`)
 							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
 							.setColor('RED')
 							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -761,7 +757,7 @@ module.exports = {
 						}
 
 						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule | <t:${Epoch_Time}:R>`)
+							.setTitle(`${team}'s Schedule`)
 							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
 							.setColor('BLURPLE')
 							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
@@ -808,6 +804,14 @@ module.exports = {
 							return;
 
 						}
+
+						// if (!userSeventh) {
+						// 	User_Seventh_Array.push('-');
+						// };
+
+						// if (!userEighth) {
+						// 	User_Eighth_Array.push('-');
+						// }
 
 						const NewScheduleData = {
 							ScheduleCreator: `${interaction.member}`,
