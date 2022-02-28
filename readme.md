@@ -1,6 +1,6 @@
 # 2ez Bot Version 2
 
-[![N|Solid](https://cdn.discordapp.com/icons/272733246792531968/a_d9533ac1614cf7f1c583485cbad9421a.png)](https://discord.gg/2ezcommunity)
+[![N|Solid](https://cdn.discordapp.com/attachments/753693196680429698/891694506343284757/2EZ_animated_transparant.gif)](https://discord.gg/2ezcommunity)
 
 # 2ez Bot V2 - now featuring Slash Commands
 
