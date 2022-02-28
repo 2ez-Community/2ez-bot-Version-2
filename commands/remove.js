@@ -15,13 +15,6 @@ module.exports = {
 
 	async execute(interaction) {
 
-		/*		
-		const Ceo = interaction.member.roles.cache.some(role => role.name === "CEO");
-		const AdminRole = interaction.member.roles.cache.some(role => role.name === "Admin");
-		const C_Rep = interaction.member.roles.cache.some(role => role.name === "Community Rep");
-		const Game_Admin = interaction.member.roles.cache.some(role => role.name === "Game Admin");
-		*/
-
 		try {
 
 			const Member = interaction.options.getMember('user');
@@ -78,28 +71,43 @@ module.exports = {
 					embeds: [
 						DoesntHaveMentionedRoleEmbed
 					],
-					ephemeral: true
 				})
 				return;
-			}
+			};
 
 			let memberAvatar = Member.user.displayAvatarURL({
 				dynamic: true
-			})
+			});
+
+			let footer = [
+				"Thank you MYSFT#6969 for keeping the bot online!",
+				"Thank you Cointree#8708 for keeping the bot online!",
+				"Thank you Shadowss#5513 for keeping the bot online!",
+				"Thank you MidoriRyuu#1222 for keeping the bot online!",
+				"Thank you hjortsater#0890 for keeping the bot online!",
+				`${Member.user.tag} | ${Member.id}`,
+			];
+
+			const randomFooter = footer[Math.floor(Math.random() * footer.length)];
 
 			const embed = new MessageEmbed()
 				.setTitle(`${Role.name} was removed`)
 				.setDescription(`> Removed **${Role.name}** from ${Member}`)
 				.setThumbnail(memberAvatar)
 				.setColor('RANDOM')
-				.setFooter(`${Member.user.tag} | ${Member.id}`, memberAvatar)
+				.setFooter({
+					text: randomFooter,
+					iconURL: memberAvatar
+				});
 
 			return Member.roles.remove(Role).catch((e) => {
 
 				embed.setTitle('ERROR')
 				embed.setDescription('>' + " " + e)
-				embed.setFooter(`${Member.user.tag} - Action failed!`)
-				embed.setColor('RED')
+				embed.setFooter({
+					text: `${Member.user.tag} - Action failed!`
+				})
+				embed.setColor('RED');
 
 			}).then(() => interaction.reply({
 				embeds: [embed]
@@ -111,7 +119,9 @@ module.exports = {
 
 				.setTitle('You ran into an Error!')
 				.setDescription('>' + " " + e)
-				.setFooter('/remove < user > < role >')
+				.setFooter({
+					text: '/remove < user > < role >'
+				})
 				.setColor('RED')
 			await interaction.reply({
 				content: "Something went wrong!",

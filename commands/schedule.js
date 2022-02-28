@@ -23,6 +23,8 @@ module.exports = {
 
 		.setDescription('Create a Team schedule! This allows you to mention 8 people!')
 
+		// .addNumberOption(option => option.setName('scrim-time').setDescription('Set a time for your scrim. All times in CET, so something like 20 or 21.').setRequired(true))
+
 		.addUserOption(option => option.setName('user-one').setDescription('Add a user to mention in the schedule!').setRequired(true))
 
 		.addUserOption(option => option.setName('user-second').setDescription('Add a user to mention in the schedule!'))
@@ -98,6 +100,8 @@ module.exports = {
 
 		];
 
+		// const time = interaction.options.getNumber('scrim-time');
+
 		const userOne = interaction.options.getMember('user-one');
 
 		const userSecond = interaction.options.getMember('user-second');
@@ -116,6 +120,29 @@ module.exports = {
 
 		const OptionalScrimDescription = interaction.options.getString('description');
 
+		// if (time < 0 || time > 24) {
+
+		// 	interaction.reply('Your time input was invalid! All times are in CET, so `20` or `21`.');
+		// 	return;
+
+		// };
+
+		/* ------------------------------------ TIME CALCULATION ---------------------------------------------------------*/
+
+		// const ScrimDate = new Date();
+		// const SendDate = new Date();
+
+
+		// const newDate = ScrimDate.setHours(time, 0, 0, 0);
+		// const DateToSend = SendDate.setHours(time, -15, 0, 0);
+
+		// const UnixTime = Math.floor(newDate / 1000); // countdown until scrim
+		// const DateToSendInUnix = Math.floor(DateToSend / 1000); //time to send the message
+
+		// console.log("Date to send", DateToSendInUnix);
+
+		/* ------------------------------------ TIME CALCULATION ---------------------------------------------------------*/
+
 		try {
 
 			ScrimDescripton.push(OptionalScrimDescription);
@@ -123,21 +150,21 @@ module.exports = {
 		} catch (e) {
 
 			console.log(e);
-			ScrimDescripton.push('> React to change your availability!');
-		}
+			ScrimDescripton.push('React to change your availability!');
+		};
 
 		if (OptionalScrimDescription == ">" || !OptionalScrimDescription) {
 
-			ScrimDescripton.push("React to change your availability.");
+			ScrimDescripton.push("React to change your availability!");
 
-		}
+		};
 
 		let yesEmoji = "<:2ez_Schedule_Yes:933802728130494524>";
 		let noEmoji = "<:2ez_Schedule_No:933803257120313406>";
 		let neutralEmoji = "<:2ez_neutral:892794587712745543>";
 		let tentativeEmoji = "<:2ez_Schedule_tentative:933802728138899556>";
 
-		try { //Push in every user + their emoji in their personal array
+		try { //Push in every user + their emoji in their personal array 
 
 			if (userOne) {
 
@@ -255,23 +282,24 @@ module.exports = {
 		}
 
 		// ⬇ Description of the embed
-		let UserMessages = ScrimDescripton.toString() + "\n" + "\n" +
+		let UserMessages =
+			(` ${ScrimDescripton.toString()}
+		
+			${User_One_Array.toString()}
 
-			User_One_Array.toString() + "\n" + "\n" +
+			${User_Second_Array.toString()}
 
-			User_Second_Array.toString() + "\n" + "\n" +
+			${User_Third_Array.toString()}
 
-			User_Third_Array.toString() + "\n" + "\n" +
+			${User_Fourth_Array.toString()}
 
-			User_Fourth_Array.toString() + "\n" + "\n" +
+			${User_Fith_Array.toString()}
 
-			User_Fith_Array.toString() + "\n" + "\n" +
+			${User_Sixth_Array.toString()}
 
-			User_Sixth_Array.toString() + "\n" + "\n" +
+			${User_Seventh_Array.toString()} 
 
-			User_Seventh_Array.toString() + "\n" + "\n" +
-
-			User_Eighth_Array.toString();
+			${User_Eighth_Array.toString()}`);
 
 		let team = `${interaction.channel.parent.name}`; // get category name
 
@@ -279,8 +307,10 @@ module.exports = {
 			.setTitle(`${team}'s Schedule`)
 			.setDescription(UserMessages)
 			.setColor('GREYPLE')
-			.setFooter(`Created by ${interaction.member.user.username}`)
-			.setTimestamp()
+			.setFooter({
+				text: `Created by ${interaction.member.user.username}`
+			})
+			.setTimestamp();
 
 		const SuccesfullyEditedEmbed = new MessageEmbed()
 			.setDescription('> Successfully changed your availability!')
@@ -288,7 +318,7 @@ module.exports = {
 
 		const NotAbleToReactEmbed = new MessageEmbed()
 			//eligible
-			.setDescription(`> Your User ID doesn't appear on the following list: **MESSAGE_MENTION_ARRAY_** `)
+			.setDescription(`> Your User ID doesn't appear on the following list: SCHEDULE_USER_ID_ARRAY `)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const NotAbleToDeleteEmbed = new MessageEmbed()
@@ -326,7 +356,7 @@ module.exports = {
 				.setCustomId('ButDelete')
 				.setLabel('Delete')
 				.setStyle("DANGER")
-			)
+			);
 
 		await interaction.reply(`Here is your schedule for the following users: ${MentionMessage}.`).then(
 
@@ -360,6 +390,18 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
+				// var timer = setInterval(function () {
+
+				// 	if (Math.round(new Date() / 1000) >= DateToSendInUnix) {
+
+				// 		interaction.channel.send(`${MentionMessage} this is your reminder for the scrim <t:${UnixTime}:R> \n \n Was this reminder correct? **If not**, please DM <@420277395036176405> and tell him!`);
+				// 		clearInterval(timer);
+				// 		console.log('Message sent - inzterval destroyed!');
+
+				// 	};
+
+				// }, 120 * 1000);
+
 				yescollector.on('collect', i => {
 
 					if (i.customId === "ButYes") {
@@ -373,7 +415,7 @@ module.exports = {
 								ephemeral: true
 							})
 							return;
-						}
+						};
 
 						try {
 
@@ -386,7 +428,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -399,7 +441,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -412,7 +454,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -425,7 +467,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -438,7 +480,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -451,7 +493,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -464,7 +506,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -477,22 +519,22 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
-						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule`)
-							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
-							.setColor('GREEN')
-							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
-							.setTimestamp()
+						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+						ScheduleEmbed.setColor('GREEN');
+						ScheduleEmbed.setFooter({
+							text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
+						});
+						ScheduleEmbed.setTimestamp();
 
 						sentMessage.edit({
 							embeds: [
-								ScheduleEdit
+								ScheduleEmbed
 							],
 						});
 
-						i.deferUpdate()
+						i.deferUpdate();
 
 					}
 
@@ -511,7 +553,7 @@ module.exports = {
 								ephemeral: true
 							})
 							return;
-						}
+						};
 
 						try {
 
@@ -524,7 +566,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -537,7 +579,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -550,7 +592,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -563,7 +605,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -576,7 +618,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -589,7 +631,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -602,7 +644,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -615,25 +657,24 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
-
-						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule`)
-							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
-							.setColor('RED')
-							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
-							.setTimestamp()
+						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+						ScheduleEmbed.setColor('RED');
+						ScheduleEmbed.setFooter({
+							text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
+						});
+						ScheduleEmbed.setTimestamp();
 
 						sentMessage.edit({
 							embeds: [
-								ScheduleEdit
+								ScheduleEmbed
 							],
 						});
 
-						i.deferUpdate()
+						i.deferUpdate();
 
-					}
+					};
 
 				});
 
@@ -650,7 +691,7 @@ module.exports = {
 								ephemeral: true
 							})
 							return;
-						}
+						};
 
 						try {
 
@@ -663,7 +704,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -676,7 +717,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -689,7 +730,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -702,7 +743,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -715,7 +756,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -728,7 +769,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -741,7 +782,7 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
 						try {
 
@@ -754,33 +795,28 @@ module.exports = {
 
 						} catch {
 
-						}
+						};
 
-						const ScheduleEdit = new MessageEmbed()
-							.setTitle(`${team}'s Schedule`)
-							.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString())
-							.setColor('BLURPLE')
-							.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
-							.setTimestamp()
+						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+						ScheduleEmbed.setColor('BLURPLE');
+						ScheduleEmbed.setFooter({
+							text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
+						});
+						ScheduleEmbed.setTimestamp();
 
 						sentMessage.edit({
 							embeds: [
-								ScheduleEdit
+								ScheduleEmbed
 							],
 						});
 
-						i.deferUpdate()
+						i.deferUpdate();
 
-					}
+					};
 
 				});
 
 				savecollector.on('collect', async i => {
-
-					const ReadytoCollectMessagesEmbed = new MessageEmbed()
-						.setDescription(`I am now waiting for your next message!`)
-						.setFooter(`You got 30 seconds until timeout!`)
-						.setColor('DARK_BUT_NOT_BLACK')
 
 					if (i.customId === "ButEdit") {
 
@@ -798,20 +834,11 @@ module.exports = {
 						if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
 
 							i.reply({
-								content: "You can only save a schedule that features at least `6 people`!",
+								content: "Your schedule needs to include at least 6 people!",
 								ephemeral: true
 							});
 							return;
-
-						}
-
-						// if (!userSeventh) {
-						// 	User_Seventh_Array.push('-');
-						// };
-
-						// if (!userEighth) {
-						// 	User_Eighth_Array.push('-');
-						// }
+						};
 
 						const NewScheduleData = {
 							ScheduleCreator: `${interaction.member}`,
@@ -871,7 +898,7 @@ module.exports = {
 
 							}
 
-						})
+						});
 
 					}
 
@@ -919,8 +946,8 @@ module.exports = {
 						} catch {
 
 							const embed = new MessageEmbed()
-								.setDescription('Error ID: `BAD_ARRAY_POP / 9 ` Contact the Dev if you see this!')
-								.setColor('RED')
+								.setDescription('Error ID: `BAD_ARRAY_INTERVAL_CLEAR / 9 ` Contact the Dev if you see this!')
+								.setColor('RED');
 
 							i.reply({
 								content: 'Something went wrong...!',
@@ -931,7 +958,7 @@ module.exports = {
 							});
 
 							return;
-						}
+						};
 
 						//Delete schedule
 
@@ -947,12 +974,14 @@ module.exports = {
 
 						})
 
+						console.log(`Schedule in ${interaction.channel.parent.name} got deleted! Cleared all intervals!`);
+
 						i.reply({
 							content: 'Everything has been deleted!',
 							ephemeral: true
 						});
 
-					}
+					};
 
 				});
 

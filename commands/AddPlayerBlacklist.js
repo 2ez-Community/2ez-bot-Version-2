@@ -18,11 +18,6 @@ module.exports = {
 		.addStringOption(option => option.setName('discord-id').setDescription('The Discord ID of the player!')),
 	async execute(interaction, client) {
 
-		await mongoose.connect(process.env.MONGODB_SRV).then(
-
-			console.log('AddPlayerBlacklist.js connection established!')
-
-		);
 
 		const BattleTag = interaction.options.getString('battle-tag');
 
@@ -34,30 +29,18 @@ module.exports = {
 
 		if (!BattleTag.includes('#')) {
 			interaction.reply({
-				content: `${BattleTag} doesn't seem like a valid Battle Tag!`,
+				content: `${BattleTag} doesn't seem like a valid Battle Tag! Your Battle Tag has to include a **#**`,
 				ephemeral: true
 			});
-
-			await mongoose.connection.close().then(
-
-				console.log(`AddPlayerBlacklist.js connection has been closed!`)
-
-			);
 
 			return;
 		};
 
 		if (!DiscordTag.includes('#')) {
 			interaction.reply({
-				content: `${DiscordTag} doesn't seem like a valid Discord Tag!`,
+				content: `${DiscordTag} doesn't seem like a valid Discord Tag! Your Discord Tag has to include a **#**`,
 				ephemeral: true
 			});
-
-			await mongoose.connection.close().then(
-
-				console.log(`AddPlayerBlacklist.js connection has been closed!`)
-
-			);
 
 			return;
 		};
@@ -68,43 +51,84 @@ module.exports = {
 				ephemeral: true
 			});
 
-			await mongoose.connection.close().then(
-
-				console.log(`AddPlayerBlacklist.js connection has been closed!`)
-
-			);
-
 			return;
 		}
 
-		console.log(`Info: 
-			Battle-Tag: ${BattleTag} 
-			Discord-Tag: ${DiscordTag}
-			Discord-ID: ${DiscordID}
-			Reason: ${Reason}
-			Author: ${interaction.member.user.username}
-		`);
+		const SmallBTag = BattleTag.toLowerCase();
+		const SmallDiscTag = DiscordTag.toLowerCase();
+
+		try {
+
+			const PlayerDiscordResult = await PlayerBlacklistSchema.findOne({
+				"discordtag": {
+					$regex: new RegExp(SmallDiscTag, "i")
+				},
+
+			});
+
+			const PlayerBattleResult = await PlayerBlacklistSchema.findOne({
+				"btag": {
+					$regex: new RegExp(SmallBTag, "i")
+				},
+
+			});
+
+			if (PlayerDiscordResult) {
+
+				interaction.reply(`${DiscordTag} was already found on the blacklist!`)
+				return;
+			};
+
+			if (PlayerBattleResult) {
+
+				interaction.reply(`${BattleTag} was already found on the blacklist!`)
+				return;
+			};
+
+		} catch (e) {
+
+			console.log('Error fetching players before adding one to the blacklist!', e);
+			return;
+
+		};
 
 		await new PlayerBlacklistSchema({
-			btag: BattleTag,
-			discordtag: DiscordTag,
+			btag: SmallBTag,
+			discordtag: SmallDiscTag,
 			discordid: DiscordID,
 			reason: Reason,
 			author: interaction.member,
 			authorusername: interaction.memer,
 			message: Reason,
-		}).save()
-
-		await mongoose.connection.close().then(
-
-			console.log(`AddPlayerBlacklist.js connection has been closed!`)
-
-		);
+		}).save();
 
 		const SavedEmbed = new MessageEmbed()
 			.setTitle(`${BattleTag} has been added to the blacklist!`)
-			.setDescription('To search for a player, use the `/find-player-from-blacklist` command!')
 			.setColor('BLURPLE');
+
+		if (DiscordID) {
+
+			SavedEmbed.setDescription(`
+			Battle Tag: ${BattleTag}
+
+			Discord Tag: ${DiscordTag}
+
+			Discord ID: ${DiscordID}
+
+			Reason for the blacklist: **${Reason}**
+			`);
+
+		} else {
+
+			SavedEmbed.setDescription(`
+			Battle Tag: ${BattleTag}
+
+			Discord Tag: ${DiscordTag}
+
+			Reason for the blacklist: **${Reason}**
+			`);
+
+		};
 
 		interaction.reply({
 			content: `Your player has been added to the 2ez Database!`,

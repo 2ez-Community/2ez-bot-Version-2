@@ -6,6 +6,8 @@ const {
 	MessageEmbed
 } = require('discord.js');
 
+const PlayerBlacklistSchema = require('../schemas/PlayerBlacklistSchema');
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('give')
@@ -88,7 +90,6 @@ module.exports = {
 
 			};
 
-
 			if (AlreadyHasMentionedRole) {
 				let AlreadyHasMentionedRoleEmbed = new MessageEmbed()
 					.setDescription(`${Member} already has the ${Role} role!`)
@@ -103,22 +104,90 @@ module.exports = {
 				return;
 			}
 
+			const FoundPlayerOnBlacklistEmbed = new MessageEmbed()
+				.setTitle('Hold on!')
+				.setDescription(`The tag **${Member.user.tag}** was found on our Blacklist! \n For more info, run the **/find-player-from-blacklist** command!`)
+				.setColor('RED');
+
+
+			console.log('Searching for Blacklisted Player in Database!');
+
+			const BTagresult = await PlayerBlacklistSchema.findOne({
+
+				btag: Member.user.tag.toLowerCase()
+
+			}).catch(async (e) => {
+
+				console.log('Couldnt fetch Data from Database! Connection is probably offline!');
+				console.log(e);
+				return;
+
+			});
+
+			const Discordresult = await PlayerBlacklistSchema.findOne({
+
+				discordtag: Member.user.tag.toLowerCase()
+
+			}).catch(async (e) => {
+
+				console.log('Couldnt fetch Data from Database! Connection is probably offline!');
+				console.log(e);
+				return;
+
+			});
+
+			if (BTagresult) {
+
+				interaction.channel.send({
+					embeds: [
+						FoundPlayerOnBlacklistEmbed
+					]
+				});
+
+			};
+
+			if (Discordresult) {
+
+				interaction.channel.send({
+					embeds: [
+						FoundPlayerOnBlacklistEmbed
+					]
+				});
+
+			};
+
 			let memberAvatar = Member.user.displayAvatarURL({
 				dynamic: true
-			})
+			});
+
+			let footer = [
+				"Thank you MYSFT#6969 for keeping the bot online!",
+				"Thank you Cointree#8708 for keeping the bot online!",
+				"Thank you Shadowss#5513 for keeping the bot online!",
+				"Thank you MidoriRyuu#1222 for keeping the bot online!",
+				"Thank you hjortsater#0890 for keeping the bot online!",
+				`${Member.user.tag} | ${Member.id}`,
+			];
+
+			const randomFooter = footer[Math.floor(Math.random() * footer.length)];
 
 			const embed = new MessageEmbed()
 				.setTitle(`${Role.name} was given`)
 				.setDescription(`> Gave **${Role.name}** to ${Member}`)
 				.setThumbnail(memberAvatar)
 				.setColor('RANDOM')
-				.setFooter(`${Member.user.tag} | ${Member.id}`, memberAvatar)
+				.setFooter({
+					text: randomFooter,
+					iconURL: memberAvatar
+				});
 
 			return Member.roles.add(Role).catch((e) => {
 
 				embed.setTitle('ERROR')
 				embed.setDescription('>' + " " + e)
-				embed.setFooter(`${Member.user.tag} - Action failed!`)
+				embed.setFooter({
+					text: `${Member.user.tag} - Action failed!`
+				});
 				embed.setColor('RED')
 
 			}).then(() => interaction.reply({
@@ -130,7 +199,9 @@ module.exports = {
 			const errorembed = new MessageEmbed()
 				.setTitle('You ran into an Error!')
 				.setDescription('>' + " " + e)
-				.setFooter('/give < user > < role >')
+				.setFooter({
+					text: '/give < user > < role >'
+				})
 				.setColor('RED')
 
 			await interaction.reply({
