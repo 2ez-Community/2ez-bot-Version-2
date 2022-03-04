@@ -138,7 +138,8 @@ module.exports = {
 
 			if (BTagresult) {
 
-				interaction.channel.send({
+				await interaction.channel.send({
+					content: "Found by Battle-Tag",
 					embeds: [
 						FoundPlayerOnBlacklistEmbed
 					]
@@ -148,7 +149,8 @@ module.exports = {
 
 			if (Discordresult) {
 
-				interaction.channel.send({
+				await interaction.channel.send({
+					content: "Found by Discord-Tag",
 					embeds: [
 						FoundPlayerOnBlacklistEmbed
 					]
@@ -173,7 +175,7 @@ module.exports = {
 
 			const embed = new MessageEmbed()
 				.setTitle(`${Role.name} was given`)
-				.setDescription(`> Gave **${Role.name}** to ${Member}`)
+				.setDescription(`> Gave **${Role.name}** to ${Member} (${Member.user.tag})`)
 				.setThumbnail(memberAvatar)
 				.setColor('RANDOM')
 				.setFooter({

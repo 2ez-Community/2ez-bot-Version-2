@@ -840,6 +840,34 @@ module.exports = {
 							return;
 						};
 
+						let UserSeventhString = ("");
+						let UserSeventhIDString = ("");
+						let UserEighthString = ("");
+						let UserEighthIDString = ("");
+
+						if (userSeventh) {
+
+							UserSeventhString = `${userSeventh}`;
+							UserSeventhIDString = `${userSeventh.user.id}`;
+
+						} else {
+
+							UserSeventhString = "-";
+							UserSeventhIDString = "-";
+						};
+
+						if (userEighth) {
+
+							UserEighthString = `${userEighth}`;
+							UserEighthIDString = `${userEighth.user.id}`;
+
+						} else {
+
+							UserEighthString = "-";
+							UserEighthIDString = "-";
+						};
+
+
 						const NewScheduleData = {
 							ScheduleCreator: `${interaction.member}`,
 							ScheduleCreatorID: `${interaction.member.user.id}`,
@@ -855,9 +883,13 @@ module.exports = {
 							userFithIDJson: `${userFith.user.id}`,
 							userSixthJson: `${userSixth}`,
 							userSixthIDJson: `${userSixth.user.id}`,
+							userSeventhJson: `${UserSeventhString}`,
+							userSeventhIDJson: `${UserSeventhIDString}`,
+							userEighthJson: `${UserEighthString}`,
+							userEighthIDJson: `${UserEighthIDString}`,
 							ScrimDescriptonJson: `${ScrimDescripton}`,
 							InteractionChannelJson: `${interaction.channel}`
-						}
+						};
 
 						let JSONuserMessage =
 							`Hey there ${i.user.username} 👋` + "\n" +
@@ -868,11 +900,13 @@ module.exports = {
 							`Third User: ${userThird}` + "\n" +
 							`Fourth User: ${userFourth}` + "\n" +
 							`Fith User: ${userFith}` + "\n" +
-							`Sixth User: ${userSixth}` + "\n" + "\n" +
+							`Sixth User: ${userSixth}` + "\n" +
+							`Seventh User: ${UserSeventhString}` + "\n" +
+							`Eighth User: ${UserEighthString}` + "\n" + "\n" +
 							`If you use /schedulepreset now, this will be your schedule!` + "\n" + "\n" +
 							`🥰 Your 2ez Bot!` + "\n" + "\n" +
 							`Your File: **Schedule_${interaction.channel.parent.name}.json**` + "\n" +
-							`Access: **${interaction.channel.parent.name}** through **${interaction.member.user.username}**`
+							`Access: **${interaction.channel.parent.name}** through **${interaction.member.user.username}**`;
 
 						fs.writeFile(`Schedule_${interaction.channel.parent.name}.json`, JSON.stringify(NewScheduleData, null, 2), async (err) => {
 

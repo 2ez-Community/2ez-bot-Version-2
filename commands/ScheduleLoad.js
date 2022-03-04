@@ -15,8 +15,6 @@ const {
 
 const fs = require('fs');
 
-const Epoch_Time_Preset = Math.floor(new Date().getTime() / 1000.0);
-
 //This code has been written by me, Marwin!
 
 module.exports = {
@@ -85,10 +83,10 @@ module.exports = {
 
 		let team = interaction.channel.parent.name // get category name
 
-		let yesEmoji = "<:2ez_yes:892497964243779604>";
-		let noEmoji = "<:2ez_no:892498012000096306>";
+		let yesEmoji = "<:2ez_Schedule_Yes:933802728130494524>";
+		let noEmoji = "<:2ez_Schedule_No:933803257120313406>";
 		let neutralEmoji = "<:2ez_neutral:892794587712745543>";
-		let tentativeEmoji = "<:2ez_tentative:892800624754823228>";
+		let tentativeEmoji = "<:2ez_Schedule_tentative:933802728138899556>";
 
 		const DidntFindSchedule = new MessageEmbed()
 			.setDescription(`Error / ID : FILE_NOT_FOUND / 1 - Critical Error`)
@@ -96,12 +94,16 @@ module.exports = {
 
 		const DidntDeleteSchedulePreset = new MessageEmbed()
 			.setDescription(`> It looks like your an into an error!`)
-			.setFooter(`Couldn't find a file called ${interaction.channel.parent.name}.json!`)
+			.setFooter({
+				text: `Couldn't find a file called ${interaction.channel.parent.name}.json!`
+			})
 			.setColor('DARK_BUT_NOT_BLACK');
 
 		const DeletedSchedulePreset = new MessageEmbed()
 			.setDescription(`> Your Preset has been deleted!`)
-			.setFooter(`Deleted: ${interaction.channel.parent.name}.json!`);
+			.setFooter({
+				text: `Deleted: ${interaction.channel.parent.name}.json!`
+			});
 
 		const NotAbleToReactEmbed = new MessageEmbed()
 			//eligible
@@ -148,6 +150,26 @@ module.exports = {
 					Check_User_Array.push(data.userFithIDJson);
 					Check_User_Array.push(data.userSixthIDJson);
 
+					if (data.userSeventhJson == "-") {
+
+						Check_User_Array.push(data.userOneIDJson);
+
+					} else {
+
+						Check_User_Array.push(data.userSeventhIDJson);
+
+					};
+
+					if (data.userEighthJson == "-") {
+
+						Check_User_Array.push(data.userOneIDJson);
+
+					} else {
+
+						Check_User_Array.push(data.userEighthIDJson);
+
+					};
+
 					console.log('Check complete!');
 
 					// Push in all users and the neutral emoji!
@@ -162,25 +184,25 @@ module.exports = {
 					User_Fith_Array.push(`${neutralEmoji} ${data.userFithJson}`);
 					User_Sixth_Array.push(`${neutralEmoji} ${data.userSixthJson}`);
 
-					if (data.userSeventhJson === "null") {
+					if (data.userSeventhJson == "-") {
 
-						User_Seventh_Array.push("");
+						User_Seventh_Array.push('');
 
 					} else {
 
 						User_Seventh_Array.push(`${neutralEmoji} ${data.userSeventhJson}`);
 
-					}
+					};
 
-					if (data.userEighthJson === "null") {
+					if (data.userEighthJson == "-") {
 
-						User_Eighth_Array.push("");
+						User_Eighth_Array.push('');
 
 					} else {
 
 						User_Eighth_Array.push(`${neutralEmoji} ${data.userEighthJson}`);
 
-					}
+					};
 
 					console.log('Users Push complete');
 
@@ -193,9 +215,27 @@ module.exports = {
 					MentionMessage.push(data.userFithJson);
 					MentionMessage.push(data.userSixthJson);
 
-					console.log('Mention complete!');
+					if (data.userSeventhJson == "-") {
 
-					console.log(`Users which are able to react: ${Check_User_Array}`);
+						MentionMessage.push('');
+
+					} else {
+
+						MentionMessage.push(data.userSeventhJson);
+
+					};
+
+					if (data.userEighthJson == "-") {
+
+						MentionMessage.push('');
+
+					} else {
+
+						MentionMessage.push(data.userEighthJson);
+
+					};
+
+					console.log('Mention complete!');
 
 					let UserMessages = ScrimDescripton.toString() + "\n" + "\n" +
 						User_One_Array.toString() + "\n" + "\n" +
@@ -203,39 +243,43 @@ module.exports = {
 						User_Third_Array.toString() + "\n" + "\n" +
 						User_Fourth_Array.toString() + "\n" + "\n" +
 						User_Fith_Array.toString() + "\n" + "\n" +
-						User_Sixth_Array.toString();
+						User_Sixth_Array.toString() + "\n" + "\n" +
+						User_Seventh_Array.toString() + "\n" + "\n" +
+						User_Eighth_Array.toString();
 
 					const ScheduleEmbed = new MessageEmbed()
-						.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
+						.setTitle(`${team}'s Schedule`)
 						.setDescription(UserMessages)
 						.setColor('GREYPLE')
-						.setFooter(`Created by ${interaction.member.user.username} | This is a preset / saved schedule!`)
+						.setFooter({
+							text: `Created by ${interaction.member.user.username} | This is a preset / saved schedule!`
+						})
 						.setTimestamp()
 
 					const Buttons = new MessageActionRow()
 						.addComponents(
 							new MessageButton()
 							.setCustomId('ButYes')
-							.setEmoji('<:2ez_yes:892497964243779604>')
+							.setEmoji('<:2ez_Schedule_Yes:933802728130494524>')
 							.setStyle('SECONDARY'),
 						)
 						.addComponents(
 							new MessageButton()
 							.setCustomId('ButNo')
-							.setEmoji('<:2ez_no:892498012000096306>')
+							.setEmoji('<:2ez_Schedule_No:933803257120313406>')
 							.setStyle('SECONDARY'),
 						)
 						.addComponents(
 							new MessageButton()
 							.setCustomId('ButIdk')
-							.setEmoji('<:2ez_tentative:892800624754823228>')
+							.setEmoji('<:2ez_Schedule_tentative:933802728138899556>')
 							.setStyle('SECONDARY'),
 						)
 						.addComponents(
 							new MessageButton()
 							.setCustomId('ButDestroyP')
 							.setLabel('Destroy Preset')
-							.setStyle("PRIMARY")
+							.setStyle("SUCCESS")
 						)
 						.addComponents(
 							new MessageButton()
@@ -298,95 +342,108 @@ module.exports = {
 										if (i.member.user.id == data.userOneIDJson) {
 
 											User_One_Array.pop();
-											User_One_Array.push(`${yesEmoji} ${data.userOneJson}`)
+											User_One_Array.push(`${yesEmoji} ${data.userOneJson}`);
 
-										}
+										};
 
 									} catch {
 
-									}
+									};
 
 									try {
 
 										if (i.member.user.id == data.userSecondIDJson) {
 
 											User_Second_Array.pop();
-											User_Second_Array.push(`${yesEmoji} ${data.userSecondJson}`)
+											User_Second_Array.push(`${yesEmoji} ${data.userSecondJson}`);
 
-										}
+										};
 
 									} catch {
 
-									}
+									};
 
 									try {
 
 										if (i.member.user.id == data.userThirdIDJson) {
 
 											User_Third_Array.pop();
-											User_Third_Array.push(`${yesEmoji} ${data.userThirdJson}`)
+											User_Third_Array.push(`${yesEmoji} ${data.userThirdJson}`);
 
-										}
+										};
 
 									} catch {
 
-									}
+									};
 
 									try {
 
 										if (i.member.user.id == data.userFourthIDJson) {
 
 											User_Fourth_Array.pop();
-											User_Fourth_Array.push(`${yesEmoji} ${data.userFourthJson}`)
+											User_Fourth_Array.push(`${yesEmoji} ${data.userFourthJson}`);
 
-										}
+										};
 
 									} catch {
 
-									}
+									};
 
 									try {
 
 										if (i.member.user.id == data.userFithIDJson) {
 
 											User_Fith_Array.pop();
-											User_Fith_Array.push(`${yesEmoji} ${data.userFithJson}`)
+											User_Fith_Array.push(`${yesEmoji} ${data.userFithJson}`);
 
-										}
+										};
 
 									} catch {
 
-									}
+									};
 
 									try {
 
-										if (i.member.user.id == data.userSixthIDJson) {
+										if (i.member.user.id == data.userSeventhIDJson) {
 
-											User_Sixth_Array.pop();
-											User_Sixth_Array.push(`${yesEmoji} ${data.userSixthJson}`)
+											User_Seventh_Array.pop();
+											User_Seventh_Array.push(`${yesEmoji} ${data.userSeventhJson}`);
 
-										}
+										};
 
 									} catch {
 
-									}
+									};
 
-									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
-										.setColor('GREEN')
-										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
-										.setTimestamp()
+									try {
+
+										if (i.member.user.id == data.userEighthIDJson) {
+
+											User_Eighth_Array.pop();
+											User_Eighth_Array.push(`${yesEmoji} ${data.userEighthJson}`);
+
+										};
+
+									} catch {
+
+									};
+
+									ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+									ScheduleEmbed.setColor('GREEN');
+									ScheduleEmbed.setFooter({
+										text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
+									});
+									ScheduleEmbed.setTimestamp();
 
 									sentMessage.edit({
 										embeds: [
-											ScheduleEdit
+											ScheduleEmbed
 										],
 									});
 
 									i.deferUpdate()
 
-								}
+								};
 
 							});
 
@@ -481,23 +538,48 @@ module.exports = {
 
 									} catch {
 
-									}
+									};
 
-									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
-										.setColor('DARK_RED')
-										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
-										.setTimestamp()
+									try {
+
+										if (i.member.user.id == data.userSeventhIDJson) {
+
+											User_Seventh_Array.pop();
+											User_Seventh_Array.push(`${noEmoji} ${data.userSeventhJson}`);
+
+										};
+
+									} catch {
+
+									};
+
+									try {
+
+										if (i.member.user.id == data.userEighthIDJson) {
+
+											User_Eighth_Array.pop();
+											User_Eighth_Array.push(`${noEmoji} ${data.userEighthJson}`);
+
+										};
+
+									} catch {
+
+									};
+
+									ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+									ScheduleEmbed.setColor('RED');
+									ScheduleEmbed.setFooter({
+										text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
+									});
+									ScheduleEmbed.setTimestamp();
 
 									sentMessage.edit({
 										embeds: [
-											ScheduleEdit
+											ScheduleEmbed
 										],
 									});
 
 									i.deferUpdate();
-									// interaction.deferUpdate();
 
 								}
 
@@ -594,22 +676,48 @@ module.exports = {
 
 									} catch {
 
-									}
+									};
 
-									const ScheduleEdit = new MessageEmbed()
-										.setTitle(`${team}'s Schedule | <t:${Epoch_Time_Preset}:R>`)
-										.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString())
-										.setColor('BLURPLE')
-										.setFooter(`Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`)
-										.setTimestamp()
+									try {
+
+										if (i.member.user.id == data.userSeventhIDJson) {
+
+											User_Seventh_Array.pop();
+											User_Seventh_Array.push(`${tentativeEmoji} ${data.userSeventhJson}`);
+
+										};
+
+									} catch {
+
+									};
+
+									try {
+
+										if (i.member.user.id == data.userEighthIDJson) {
+
+											User_Eighth_Array.pop();
+											User_Eighth_Array.push(`${tentativeEmoji} ${data.userEighthJson}`);
+
+										};
+
+									} catch {
+
+									};
+
+									ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+									ScheduleEmbed.setColor('BLURPLE');
+									ScheduleEmbed.setFooter({
+										text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
+									});
+									ScheduleEmbed.setTimestamp();
 
 									sentMessage.edit({
 										embeds: [
-											ScheduleEdit
+											ScheduleEmbed
 										],
 									});
 
-									i.deferUpdate()
+									i.deferUpdate();
 
 								}
 
@@ -668,7 +776,7 @@ module.exports = {
 										i.reply(`Error / ID : BAD_UNLINK_REQUEST / 9`)
 										return;
 
-									}
+									};
 
 
 
