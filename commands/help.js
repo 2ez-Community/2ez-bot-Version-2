@@ -19,7 +19,7 @@ module.exports = {
 
             "`/schedulepreset` - Load a schedule which has been saved by you! \n \n" +
 
-            "`/schedule-set-autoresend` - This will send your saved schedule everyday at 20 CET \n \n" +
+            "`/schedule-set-autoresend` - This will send your saved schedule everyday at 11 CET \n \n" +
 
             "`/give` - Give a role to someone. \n \n" +
 
@@ -44,8 +44,6 @@ module.exports = {
             "`/team-update-list` - Update your team list on the Database! \n \n" +
 
             "More to come... \n \n" +
-
-            "The old `2ez Bot` (*help) features more commands! \n \n" +
 
             "`2ez Bot V2` is an open source Discord Bot developed by Marwin and Turbo. \n \n" +
 
