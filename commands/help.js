@@ -15,15 +15,33 @@ module.exports = {
         let HelpembedDescContent =
             "**Commands:** \n \n" +
 
-            "`/schedule` -Create a schedule to let your mates show if they are available! \n \n" +
+            "`/schedule` - Create a schedule to let your mates show if they are available! \n \n" +
 
-            "`/schedulepreset` -Load a schedule which has been saved by you! \n \n" +
+            "`/schedulepreset` - Load a schedule which has been saved by you! \n \n" +
+
+            "`/schedule-set-autoresend` - This will send your saved schedule everyday at 20 CET \n \n" +
 
             "`/give` - Give a role to someone. \n \n" +
 
             "`/remove` - Remove a role from someone. \n \n" +
 
             "`/teams` - Get an overview of all 2ez Overwatch Teams. \n \n" +
+
+            "`/add-player-to-blacklist` - Add a Player to the 2ez Blacklist Database! \n \n" +
+
+            "`/find-player-from-blacklist ` - Check if your mentioned player happens to be the Blacklist! \n \n" +
+
+            "`/add-team-to-blacklist` - Add a Team to the 2ez Blacklist Database! \n \n" +
+
+            "`/find-team-from-blacklist` - Check if your team mentioned happens to be the Blacklist! \n \n" +
+
+            "`/team-request-from-list` - Search a 2ez Overwatch Team on the 2ez Team List! \n \n" +
+
+            "`/team-add-to-list` - Add your team to the Database so others can look at it! \n \n" +
+
+            "`/team-remove-player-from-list` - Remove a player from your Teamlist! \n \n" +
+
+            "`/team-update-list` - Update your team list on the Database! \n \n" +
 
             "More to come... \n \n" +
 
