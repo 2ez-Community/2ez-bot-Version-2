@@ -1,6 +1,7 @@
 const {
 	SlashCommandBuilder
 } = require('@discordjs/builders');
+const console = require('console');
 
 const {
 	MessageActionRow,
@@ -43,6 +44,7 @@ module.exports = {
 		let DayString = ("");
 		let IntAuhtor = interaction.member.id;
 		let SendChannel = interaction.channel;
+		const url_taskMap = {}
 
 		let Check_User_Array = [
 
@@ -114,14 +116,7 @@ module.exports = {
 			})
 			.setColor('DARK_BUT_NOT_BLACK');
 
-		const DeletedSchedulePreset = new MessageEmbed()
-			.setDescription(`> Your Preset has been deleted!`)
-			.setFooter({
-				text: `Deleted: ${interaction.channel.parent.name}.json!`
-			});
-
 		const NotAbleToReactEmbed = new MessageEmbed()
-			//eligible
 			.setDescription(`> Your User ID does not appear on the following list: **Check_User_ID_Array** `)
 			.setColor('DARK_BUT_NOT_BLACK');
 
@@ -130,7 +125,7 @@ module.exports = {
 			.setColor('DARK_BUT_NOT_BLACK');
 
 		const OnlyScheduleCreatorEmbed = new MessageEmbed()
-			.setDescription(`This is only available to the person who activated the auto-sending!`)
+			.setDescription(`This is only available to the person who activated the auto sending!`)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const SuccessSaveEmbed = new MessageEmbed()
@@ -140,6 +135,11 @@ module.exports = {
 		const SuccessStopCronEmbed = new MessageEmbed()
 			.setDescription(`<:2ezBotV2_YES:951558270340972574> Your schedule will not be sent again!`)
 			.setColor('GREEN');
+
+		const DisableRemindersEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
+			.setColor('GREEN');
+
 
 		const Buttons = new MessageActionRow()
 			.addComponents(
@@ -169,32 +169,32 @@ module.exports = {
 			.addComponents(
 				new MessageButton()
 				.setCustomId('ButDelete')
-				.setLabel('Delete')
-				.setStyle("DANGER")
+				.setLabel('Disable reminders')
+				.setStyle("PRIMARY")
 			);
 
-		let UserSendingMessage =
-			`Hey there 🌟👋` + "\n" + "\n" +
-			`Thanks for trying out this new command!` + "\n" + "\n" +
-			`The bot will proceed sending schedules on **${SendingDays}**!` + "\n" +
-			`It will always send a preset schedule, so make sure your current one is up to date!` + "\n" +
-			`When saving a new schedule, the bot will automatically send the newest one as a preset schedule.` + "\n" +
-			`You don't need to run this command again if you want to change your preset!` + "\n" +
-			`Again, thank you so much for trying this out! ❤` + "\n" + "\n" +
-			`You think you found a bug? Report it [here](https://github.com/2ez-Community/2ez-bot-Version-2/issues)`;
+		// let UserSendingMessage =
+		// 	`Hey there 🌟👋` + "\n" + "\n" +
+		// 	`Thanks for trying out this new command!` + "\n" + "\n" +
+		// 	`The bot will proceed sending schedules on **${SendingDays}**!` + "\n" +
+		// 	`It will always send a preset schedule, so make sure your current one is up to date!` + "\n" +
+		// 	`When saving a new schedule, the bot will automatically send the newest one as a preset schedule.` + "\n" +
+		// 	`You don't need to run this command again if you want to change your preset!` + "\n" +
+		// 	`Again, thank you so much for trying this out! ❤` + "\n" + "\n" +
+		// 	`You think you found a bug? Report it [here](https://github.com/2ez-Community/2ez-bot-Version-2/issues)`;
 
 
-		const DMEmbed = new MessageEmbed()
-			.setDescription(UserSendingMessage)
-			.setColor('DARK_VIVID_PINK');
+		// const DMEmbed = new MessageEmbed()
+		// 	.setDescription(UserSendingMessage)
+		// 	.setColor('DARK_VIVID_PINK');
 
-		interaction.member.send({
-			embeds: [
-				DMEmbed
-			]
-		}).catch((e) => {
-			console.log('Wasnt able to send DM to user!', e);
-		});
+		// interaction.member.send({
+		// 	embeds: [
+		// 		DMEmbed
+		// 	]
+		// }).catch((e) => {
+		// 	console.log('Wasnt able to send DM to user!', e);
+		// });
 
 		await interaction.reply({
 			content: "Your schedule date has been set!",
@@ -205,7 +205,7 @@ module.exports = {
 
 		console.log(`Set an automatic schedule in ${interaction.channel.parent.name} - Author: ${interaction.member.user.username}`);
 
-		var autoschedule = cron.schedule('0 10 * * *', () => { //0 10 * * *
+		var autoschedule = cron.schedule('* * * * *', () => { //0 10 * * *
 
 			let date = new Date();
 			let day = date.toLocaleString('en-gb', {
@@ -230,7 +230,7 @@ module.exports = {
 
 					autoschedule.stop();
 					console.log('Automatic schedule returned early due to missing preset!', SendChannel.name);
-				
+
 					return;
 
 				} else {
@@ -390,6 +390,23 @@ module.exports = {
 						const deletecollector = sentMessage.createMessageComponentCollector({
 							componentType: 'BUTTON'
 						});
+
+						var reminderschedule = cron.schedule('* * * * *', () => { //45 18 * * *
+
+							url_taskMap['url'] = reminderschedule;
+							let job = url_taskMap['url'];
+
+							SendChannel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+
+							job.stop(),
+							console.log("Stopped reminder from running!")
+
+							console.log('Sent reminder message!');
+
+						});
+
+						url_taskMap['url'] = reminderschedule;
+						let reminders = url_taskMap['url'];
 
 						yescollector.on('collect', i => {
 
@@ -832,7 +849,7 @@ module.exports = {
 
 								} catch {
 
-									i.reply(`Error / ID : BAD_UNLINK_REQUEST / 9`)
+									i.reply(`Error / ID : BAD_UNLINK_REQUEST / 9`);
 									return;
 
 								};
@@ -845,7 +862,7 @@ module.exports = {
 
 							if (i.customId === "ButDelete") {
 
-								if (i.user.id !== interaction.member.user.id) {
+								if (i.user.id !== IntAuhtor) {
 									i.reply({
 										content: "You are not able to use this!",
 										embeds: [
@@ -856,25 +873,26 @@ module.exports = {
 									return;
 								};
 
-								//Delete schedule
-								sentMessage.delete().catch(() => {
+								try {
 
-									console.log('Error ID: 10');
+									reminders.stop();
+									console.log(`Disabled reminders for ${SendChannel.name}!`)
 
-								});
+								} catch (e) {
 
-								interaction.deleteReply().catch(() => {
+									i.reply('Oops this is awkward... Something went wrong.');
+									console.log(e);
+									return;
 
-									console.log('Error ID: 11');
-
-								});
+								};
 
 								i.reply({
-									content: 'Everything has been deleted!',
-									ephemeral: true
-								});
+									embeds: [
+										DisableRemindersEmbed
+									],
+								})
 
-							}
+							};
 
 						});
 

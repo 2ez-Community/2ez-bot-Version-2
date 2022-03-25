@@ -52,7 +52,7 @@ module.exports = {
 		if (!result) {
 
 			interaction.reply({
-				content: `We couln't find a team called **${TeamName}**. Make sure you added your team with the **/team-add-database** command`
+				content: `We couldn't find a team called **${TeamName}**. Make sure you added your team with the **/team-add-database** command`
 			});
 			return;
 		};
@@ -79,15 +79,15 @@ module.exports = {
 			};
 		};
 
-		let CoachOneString = (result.coachone);
-		let CoachTwoString = (result.coachtwo);
-		let ManagerString = (result.manager);
-		let TankOneString = (result.tankone);
-		let TankTwoString = (result.tanktwo);
-		let DPSOneString = (result.dpsone);
-		let DPSTwoString = (result.dpstwo);
-		let SuppOneString = (result.suppone);
-		let SuppTwoString = (result.supptwo);
+		let CoachOneString = (result.coachone.replace("!", ""));
+		let CoachTwoString = (result.coachtwo.replace("!", ""));
+		let ManagerString = (result.manager.replace("!", ""));
+		let TankOneString = (result.tankone.replace("!", ""));
+		let TankTwoString = (result.tanktwo.replace("!", ""));
+		let DPSOneString = (result.dpsone.replace("!", ""));
+		let DPSTwoString = (result.dpstwo.replace("!", ""));
+		let SuppOneString = (result.suppone.replace("!", ""));
+		let SuppTwoString = (result.supptwo.replace("!", ""));
 
 		let NewAliasString = ("");
 		let NewSRString = ("");
@@ -147,7 +147,7 @@ module.exports = {
 
 			if (CoachOne) {
 
-				if (CoachOneString.includes(CoachOne)) {
+				if (CoachOneString.includes(CoachOne.toString().replace("!", ""))) {
 
 					interaction.reply(`${CoachOne} already appears on that list!`);
 					return;
@@ -166,7 +166,7 @@ module.exports = {
 
 			if (CoachTwo) {
 
-				if (CoachTwoString.includes(CoachTwo)) {
+				if (CoachTwoString.includes(CoachTwo.toString().replace("!", ""))) {
 
 					interaction.reply(`${CoachTwo} already appears on that list!`);
 					return;
@@ -185,7 +185,7 @@ module.exports = {
 
 			if (Manager) {
 
-				if (ManagerString.includes(Manager)) {
+				if (ManagerString.includes(Manager.toString().replace("!", ""))) {
 
 					interaction.reply(`${Manager} already appears on that list!`);
 					return;
@@ -204,7 +204,7 @@ module.exports = {
 
 			if (TankOne) {
 
-				if (TankOneString.includes(TankOne)) {
+				if (TankOneString.includes(TankOne.toString().replace("!", ""))) {
 
 					interaction.reply(`${TankOne} already appears on that list!`);
 					return;
@@ -223,7 +223,7 @@ module.exports = {
 
 			if (TankTwo) {
 
-				if (TankTwoString.includes(TankTwo)) {
+				if (TankTwoString.includes(TankTwo.toString().replace("!", ""))) {
 
 					interaction.reply(`${TankTwo} already appears on that list!`);
 					return;
@@ -242,7 +242,7 @@ module.exports = {
 
 			if (DPSOne) {
 
-				if (DPSOneString.includes(DPSOne)) {
+				if (DPSOneString.includes(DPSOne.toString().replace("!", ""))) {
 
 					interaction.reply(`${DPSOne} already appears on that list!`);
 					return;
@@ -261,7 +261,7 @@ module.exports = {
 
 			if (DPSTwo) {
 
-				if (DPSTwoString.includes(DPSTwo)) {
+				if (DPSTwoString.includes(DPSTwo.toString().replace("!", ""))) {
 
 					interaction.reply(`${DPSTwo} already appears on that list!`);
 					return;
@@ -280,7 +280,7 @@ module.exports = {
 
 			if (SuppOne) {
 
-				if (SuppOneString.includes(SuppOne)) {
+				if (SuppOneString.includes(SuppOne.toString().replace("!", ""))) {
 
 					interaction.reply(`${SuppOne} already appears on that list!`);
 					return;
@@ -299,7 +299,7 @@ module.exports = {
 
 			if (SuppTwo) {
 
-				if (SuppTwoString.includes(SuppTwo)) {
+				if (SuppTwoString.includes(SuppTwo.toString().replace("!", ""))) {
 
 					interaction.reply(`${SuppTwo} already appears on that list!`);
 					return;
