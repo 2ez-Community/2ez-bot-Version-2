@@ -2,7 +2,9 @@ const {
 	SlashCommandBuilder
 } = require('@discordjs/builders');
 const {
-	MessageEmbed
+	MessageEmbed,
+	MessageActionRow,
+	MessageButton
 } = require('discord.js');
 const mongoose = require('mongoose');
 const TeamBlacklistSchema = require('../schemas/TeamBlacklistSchema');
@@ -53,97 +55,205 @@ module.exports = {
 
 		const SmallTeamName = TeamName.toLowerCase();
 
-		try {
 
-			const result = await TeamBlacklistSchema.findOne({
-				"teamname": {
-					$regex: new RegExp(SmallTeamName, "i")
-				},
+
+		const result = await TeamBlacklistSchema.findOne({
+			"teamname": {
+				$regex: new RegExp(SmallTeamName, "i")
+			},
+
+		});
+
+		if (result) {
+
+			const Buttons = new MessageActionRow()
+				.addComponents(
+					new MessageButton()
+					.setCustomId('ButYes')
+					.setLabel('Yes')
+					.setStyle('PRIMARY'),
+				)
+				.addComponents(
+					new MessageButton()
+					.setCustomId('ButNo')
+					.setLabel('No')
+					.setStyle('DANGER'),
+				);
+
+			interaction.reply({
+				content: "Hold up...",
+				ephemeral: true
+			});
+
+			interaction.channel.send({
+				content: `**${TeamName}** already appears to be blacklisted. Would you like to update their blacklist entry?`,
+				components: [
+					Buttons
+				],
+				ephemeral: true,
+			}).then(sentMessage => {
+
+				const yescollector = sentMessage.createMessageComponentCollector({
+					componentType: 'BUTTON'
+				});
+
+				const nocollector = sentMessage.createMessageComponentCollector({
+					componentType: 'BUTTON'
+				});
+
+				yescollector.on('collect', async i => {
+
+					if (i.customId === "ButYes") {
+
+						if (i.member.user.id !== interaction.member.id) {
+							i.reply({
+								content: "You are not able to decide this.",
+								ephemeral: true
+							});
+							return;
+						};
+
+						const filter = {
+							teamname: SmallTeamName
+						};
+
+						const NewMessage = {
+							teamname: SmallTeamName,
+							reason: Reason,
+							sr: SR,
+							managerdiscord: ManagerDiscord,
+							managerbtag: ManagerBtag,
+							captaindiscord: CaptainDiscord,
+							captainbtag: CaptainBtag,
+							author: `${interaction.member}`,
+						};
+
+						await TeamBlacklistSchema.findOneAndUpdate(filter, NewMessage, {
+							new: true
+						}).catch((e) => {
+							interaction.reply('Oops this is awkward. Something went wrong!');
+							console.log(`Something went wrong when trying to update the LFS DB: ${e} `);
+							return;
+						});
+
+						const EditEmbed = new MessageEmbed()
+							.setDescription(`<:2ez_Schedule_Yes:933802728130494524> You succesfully updated ${TeamName}'s blacklist entry!` + "\n" + "\n" +
+								`Skill rating: ${SR}k` + "\n" +
+								`Reason: **${Reason}**`
+							)
+							.setColor('GREEN');
+
+						i.reply({
+							embeds: [
+								EditEmbed
+							],
+						});
+
+						sentMessage.delete();
+
+						return;
+
+					};
+
+				});
+
+				nocollector.on('collect', i => {
+
+					if (i.customId === "ButNo") {
+
+						const cancelEmbed = new MessageEmbed()
+							.setDescription('<:2ez_Schedule_No:933803257120313406> Alright, I did not edit anything!')
+							.setColor('RED');
+
+						i.reply({
+							embeds: [
+								cancelEmbed
+							],
+							ephemeral: true
+						});
+
+						sentMessage.delete();
+
+						return;
+
+					};
+
+				});
 
 			});
 
-			if (result) {
+		} else {
 
-				interaction.reply(`${TeamName} was already found on the blacklist!`)
-				return;
+			await new TeamBlacklistSchema({
+				teamname: SmallTeamName,
+				reason: Reason,
+				sr: SR,
+				managerdiscord: ManagerDiscord,
+				managerbtag: ManagerBtag,
+				captaindiscord: CaptainDiscord,
+				captainbtag: CaptainBtag,
+				author: interaction.member,
+			}).save();
+
+			let OptionalSR = SR;
+			let OptionalMDiscord = ManagerDiscord;
+			let OptionalMBTAG = ManagerBtag;
+			let OptionalCDiscord = CaptainDiscord;
+			let OptionalCBTAG = CaptainBtag
+
+			if (!OptionalSR) {
+				OptionalSR = "-";
+			} else {
+				OptionalSR = `Team SR: ${SR}`;
+			};
+			if (!OptionalMDiscord) {
+				OptionalMDiscord = "";
+			} else {
+				OptionalMDiscord = `Manager Discord: ${ManagerDiscord}`;
+			};
+			if (!OptionalMBTAG) {
+				OptionalMBTAG = "";
+			} else {
+				OptionalMBTAG = `Manager Battle-Tag: ${ManagerBtag}`;
+			};
+			if (!OptionalCDiscord) {
+				OptionalCDiscord = "";
+			} else {
+				OptionalCDiscord = `Captain Discord: ${CaptainDiscord}`;
+			};
+			if (!OptionalCBTAG) {
+				OptionalCBTAG = "";
+			} else {
+				OptionalCBTAG = `Captain Battle-Tag: ${CaptainBtag}`;
 			};
 
-		} catch (e) {
+			const SavedEmbed = new MessageEmbed()
+				.setTitle(`${TeamName} has been added to the blacklist!`)
+				.setDescription(`
+					Team Name: **${TeamName}**
+		
+					Reason for the blacklist: **${Reason}**
+		
+					**${TeamName}** was blacklisted by ${interaction.member}!
+		
+					${OptionalSR}
+		
+					${OptionalCDiscord}
+		
+					${OptionalCBTAG}
+		
+					${OptionalMDiscord}
+		
+					${OptionalMBTAG}`)
+				.setColor('BLURPLE');
 
-			console.log('Error fetching teams before adding one to the blacklist!', e);
-			return;
+			interaction.reply({
+				content: `Your team has been added to the 2ez Blacklist Database!`,
+				embeds: [
+					SavedEmbed,
+				]
+			});
 
 		};
-
-		await new TeamBlacklistSchema({
-			teamname: SmallTeamName,
-			reason: Reason,
-			sr: SR,
-			managerdiscord: ManagerDiscord,
-			managerbtag: ManagerBtag,
-			captaindiscord: CaptainDiscord,
-			captainbtag: CaptainBtag,
-			author: interaction.member,
-		}).save();
-
-		let OptionalSR = SR;
-		let OptionalMDiscord = ManagerDiscord;
-		let OptionalMBTAG = ManagerBtag;
-		let OptionalCDiscord = CaptainDiscord;
-		let OptionalCBTAG = CaptainBtag
-
-		if (!OptionalSR) {
-			OptionalSR = "-";
-		} else {
-			OptionalSR = `Team SR: ${SR}`;
-		};
-		if (!OptionalMDiscord) {
-			OptionalMDiscord = "";
-		} else {
-			OptionalMDiscord = `Manager Discord: ${ManagerDiscord}`;
-		};
-		if (!OptionalMBTAG) {
-			OptionalMBTAG = "";
-		} else {
-			OptionalMBTAG = `Manager Battle-Tag: ${ManagerBtag}`;
-		};
-		if (!OptionalCDiscord) {
-			OptionalCDiscord = "";
-		} else {
-			OptionalCDiscord = `Captain Discord: ${CaptainDiscord}`;
-		};
-		if (!OptionalCBTAG) {
-			OptionalCBTAG = "";
-		} else {
-			OptionalCBTAG = `Captain Battle-Tag: ${CaptainBtag}`;
-		};
-
-		const SavedEmbed = new MessageEmbed()
-			.setTitle(`${TeamName} has been added to the blacklist!`)
-			.setDescription(`
-			Team Name: **${TeamName}**
-
-			Reason for the blacklist: **${Reason}**
-
-			**${TeamName}** was blacklisted by ${interaction.member}!
-
-			${OptionalSR}
-
-			${OptionalCDiscord}
-
-			${OptionalCBTAG}
-
-			${OptionalMDiscord}
-
-			${OptionalMBTAG}`)
-			.setColor('BLURPLE');
-
-		interaction.reply({
-			content: `Your team has been added to the 2ez Blacklist Database!`,
-			embeds: [
-				SavedEmbed,
-			]
-		});
-
 	},
 };
