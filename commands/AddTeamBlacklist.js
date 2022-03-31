@@ -18,6 +18,7 @@ module.exports = {
 		.addStringOption(option => option.setName('team-name').setDescription('The Name of the Team!').setRequired(true))
 		.addStringOption(option => option.setName('blacklist-reason').setDescription('The reason why you want to blacklist this team!').setRequired(true))
 		.addStringOption(option => option.setName('sr').setDescription('The SR of the Team!'))
+		.addStringOption(option => option.setName('evidence').setDescription('Got a picture of a team trolling? Paste in the link here.'))
 		.addStringOption(option => option.setName('manager-discord').setDescription('The Discord-Tag of the Manager!'))
 		.addStringOption(option => option.setName('manager-btag').setDescription('The Battle-Tag of the Manager!'))
 		.addStringOption(option => option.setName('captain-discord').setDescription('The Discord-Tag of the Captain!'))
@@ -39,6 +40,7 @@ module.exports = {
 		const TeamName = interaction.options.getString('team-name');
 		const Reason = interaction.options.getString('blacklist-reason');
 		const SR = interaction.options.getString('sr');
+		const Evidence = interaction.options.getString('evidence');
 		const ManagerDiscord = interaction.options.getString('manager-discord');
 		const ManagerBtag = interaction.options.getString('manager-btag');
 		const CaptainDiscord = interaction.options.getString('captain-discord');
@@ -64,7 +66,11 @@ module.exports = {
 
 		});
 
+
 		if (result) {
+
+			let oldauthor = (result.author);
+			let newauther = (oldauthor + `${interaction.member}`);
 
 			const Buttons = new MessageActionRow()
 				.addComponents(
@@ -121,11 +127,12 @@ module.exports = {
 							teamname: SmallTeamName,
 							reason: Reason,
 							sr: SR,
+							evidence: Evidence,
 							managerdiscord: ManagerDiscord,
 							managerbtag: ManagerBtag,
 							captaindiscord: CaptainDiscord,
 							captainbtag: CaptainBtag,
-							author: `${interaction.member}`,
+							author: `${newauther}`,
 						};
 
 						await TeamBlacklistSchema.findOneAndUpdate(filter, NewMessage, {
@@ -136,22 +143,34 @@ module.exports = {
 							return;
 						});
 
-						const EditEmbed = new MessageEmbed()
+						try {
+							
+							const EditEmbed = new MessageEmbed()
 							.setDescription(`<:2ez_Schedule_Yes:933802728130494524> You succesfully updated ${TeamName}'s blacklist entry!` + "\n" + "\n" +
 								`Skill rating: ${SR}k` + "\n" +
-								`Reason: **${Reason}**`
+								`Reason: **${Reason}**` + "\n" +
+								`Blacklisted by: **${newauther}**`
 							)
-							.setColor('GREEN');
+							.setColor('GREEN')
+							.setImage(Evidence);
 
-						i.reply({
-							embeds: [
-								EditEmbed
-							],
-						});
+							i.reply({
+								embeds: [
+									EditEmbed
+								],
+							});
+	
+							sentMessage.delete();
+	
+							return;
+						
+						} catch(e) {
 
-						sentMessage.delete();
+							interaction.reply('I was unable to send the message. Your team has been saved though.');
+							console.log('Error when trying to send TeamBlacklistEmbed', e);
+							return;
 
-						return;
+						};
 
 					};
 
@@ -188,6 +207,7 @@ module.exports = {
 				teamname: SmallTeamName,
 				reason: Reason,
 				sr: SR,
+				evidence: Evidence,
 				managerdiscord: ManagerDiscord,
 				managerbtag: ManagerBtag,
 				captaindiscord: CaptainDiscord,
@@ -227,7 +247,9 @@ module.exports = {
 				OptionalCBTAG = `Captain Battle-Tag: ${CaptainBtag}`;
 			};
 
-			const SavedEmbed = new MessageEmbed()
+			try {
+
+				const SavedEmbed = new MessageEmbed()
 				.setTitle(`${TeamName} has been added to the blacklist!`)
 				.setDescription(`
 					Team Name: **${TeamName}**
@@ -245,7 +267,8 @@ module.exports = {
 					${OptionalMDiscord}
 		
 					${OptionalMBTAG}`)
-				.setColor('BLURPLE');
+				.setColor('BLURPLE')
+				.setImage(Evidence);
 
 			interaction.reply({
 				content: `Your team has been added to the 2ez Blacklist Database!`,
@@ -253,6 +276,13 @@ module.exports = {
 					SavedEmbed,
 				]
 			});
+
+			} catch(e) {
+
+				interaction.reply('I was able to save your team to the database, but something went wrong when trying to send the embed.');
+				return;
+
+			};
 
 		};
 	},

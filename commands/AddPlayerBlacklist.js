@@ -17,6 +17,7 @@ module.exports = {
 		.addStringOption(option => option.setName('battle-tag').setDescription('The Battle Tag of the Player!').setRequired(true))
 		.addStringOption(option => option.setName('discord-tag').setDescription('The Discord Tag!').setRequired(true))
 		.addStringOption(option => option.setName('blacklist-reason').setDescription('Why should this player be blacklisted?').setRequired(true))
+		.addStringOption(option => option.setName('evidence').setDescription('Got a picture of a team trolling? Paste in the link here.'))
 		.addStringOption(option => option.setName('discord-id').setDescription('The Discord ID of the player!')),
 	async execute(interaction, client) {
 
@@ -24,6 +25,8 @@ module.exports = {
 		const BattleTag = interaction.options.getString('battle-tag');
 
 		const DiscordTag = interaction.options.getString('discord-tag');
+
+		const Evidence = interaction.options.getString('evidence');
 
 		const DiscordID = interaction.options.getString('discord-id');
 
@@ -76,6 +79,9 @@ module.exports = {
 		});
 
 		if (PlayerBattleResult || PlayerDiscordResult) {
+
+			let oldauthor = (PlayerBattleResult.author);
+			let newauther = (oldauthor + `${interaction.member}`);
 
 			const Buttons = new MessageActionRow()
 				.addComponents(
@@ -135,9 +141,10 @@ module.exports = {
 							const NewMessage = {
 								btag: SmallBTag,
 								discordtag: SmallDiscTag,
+								evidence: Evidence,
 								discordid: DiscordID,
 								reason: Reason,
-								author: `${interaction.member}`,
+								author: `${newauther}`,
 								authorusername: interaction.member.user.username,
 								message: Reason,
 							};
@@ -154,8 +161,10 @@ module.exports = {
 								.setDescription(`<:2ez_Schedule_Yes:933802728130494524> You succesfully updated ${BattleTag}'s blacklist entry!` + "\n" + "\n" +
 									`Battle Tag: ${BattleTag}` + "\n" +
 									`Discord Tag: ${DiscordTag}` + "\n" +
-									`Reason: **${Reason}**`
+									`Reason: **${Reason}**` + "\n" +
+									`Blacklisted by: **${newauther}**`
 								)
+								.setImage(Evidence)
 								.setColor('GREEN');
 
 							i.reply({
@@ -179,9 +188,10 @@ module.exports = {
 						const NewMessage = {
 							btag: SmallBTag,
 							discordtag: SmallDiscTag,
+							evidence: Evidence,
 							discordid: DiscordID,
 							reason: Reason,
-							author: `${interaction.member}`,
+							author: `${newauther}`,
 							authorusername: interaction.member.user.username,
 						};
 
@@ -197,8 +207,10 @@ module.exports = {
 							.setDescription(`<:2ez_Schedule_Yes:933802728130494524> You succesfully updated ${BattleTag}'s blacklist entry!` + "\n" + "\n" +
 								`Battle Tag: ${BattleTag}` + "\n" +
 								`Discord Tag: ${DiscordTag}` + "\n" +
-								`Reason: **${Reason}**`
+								`Reason: **${Reason}**` + "\n" +
+								`Blacklisted by: **${newauther}**`
 							)
+							.setImage(Evidence)
 							.setColor('GREEN');
 
 						i.reply({
@@ -262,6 +274,7 @@ module.exports = {
 
 			const SavedEmbed = new MessageEmbed()
 				.setTitle(`${BattleTag} has been added to the blacklist!`)
+				.setImage(Evidence)
 				.setColor('BLURPLE');
 
 			if (DiscordID) {
