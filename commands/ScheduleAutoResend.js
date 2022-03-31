@@ -41,6 +41,7 @@ module.exports = {
 
 		// }
 
+		
 		let DayString = ("");
 		let IntAuhtor = interaction.member.id;
 		let SendChannel = interaction.channel;
@@ -90,7 +91,7 @@ module.exports = {
 
 		];
 
-		// * * * * *
+		
 
 		const SendingDays = interaction.options.getString('days');
 		let team = interaction.channel.parent.name // get category name
@@ -173,29 +174,6 @@ module.exports = {
 				.setStyle("PRIMARY")
 			);
 
-		// let UserSendingMessage =
-		// 	`Hey there 🌟👋` + "\n" + "\n" +
-		// 	`Thanks for trying out this new command!` + "\n" + "\n" +
-		// 	`The bot will proceed sending schedules on **${SendingDays}**!` + "\n" +
-		// 	`It will always send a preset schedule, so make sure your current one is up to date!` + "\n" +
-		// 	`When saving a new schedule, the bot will automatically send the newest one as a preset schedule.` + "\n" +
-		// 	`You don't need to run this command again if you want to change your preset!` + "\n" +
-		// 	`Again, thank you so much for trying this out! ❤` + "\n" + "\n" +
-		// 	`You think you found a bug? Report it [here](https://github.com/2ez-Community/2ez-bot-Version-2/issues)`;
-
-
-		// const DMEmbed = new MessageEmbed()
-		// 	.setDescription(UserSendingMessage)
-		// 	.setColor('DARK_VIVID_PINK');
-
-		// interaction.member.send({
-		// 	embeds: [
-		// 		DMEmbed
-		// 	]
-		// }).catch((e) => {
-		// 	console.log('Wasnt able to send DM to user!', e);
-		// });
-
 		await interaction.reply({
 			content: "Your schedule date has been set!",
 			embeds: [
@@ -205,7 +183,7 @@ module.exports = {
 
 		console.log(`Set an automatic schedule in ${interaction.channel.parent.name} - Author: ${interaction.member.user.username}`);
 
-		var autoschedule = cron.schedule('* * * * *', () => { //0 10 * * *
+		var autoschedule = cron.schedule('0 8 * * *', () => { //0 9 * * *
 
 			let date = new Date();
 			let day = date.toLocaleString('en-gb', {
@@ -391,15 +369,9 @@ module.exports = {
 							componentType: 'BUTTON'
 						});
 
-						var reminderschedule = cron.schedule('* * * * *', () => { //45 18 * * *
-
-							url_taskMap['url'] = reminderschedule;
-							let job = url_taskMap['url'];
+						var reminderschedule = cron.schedule('45 17 * * *', () => { //45 18 * * *
 
 							SendChannel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-
-							job.stop(),
-							console.log("Stopped reminder from running!")
 
 							console.log('Sent reminder message!');
 
@@ -407,6 +379,13 @@ module.exports = {
 
 						url_taskMap['url'] = reminderschedule;
 						let reminders = url_taskMap['url'];
+
+						var closereminders = cron.schedule('47 17 * * *', () => { //45 18 * * *
+
+							reminders.stop();
+							console.log('Stopped reminder!');
+
+						});
 
 						yescollector.on('collect', i => {
 
