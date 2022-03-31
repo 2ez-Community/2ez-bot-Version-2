@@ -1,0 +1,9 @@
+.env
+config.json
+CoinSchema.js
+LFSSchema.js
+PlayerBlacklistSchema.js
+TeamBlacklistSchema.js
+SocialCreditSchema.js
+TeamDatabaseSchema.js
+ideas.md
