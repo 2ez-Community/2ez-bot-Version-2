@@ -23,8 +23,6 @@ module.exports = {
 
 		.setDescription('Create a Team schedule! This allows you to mention 8 people!')
 
-		// .addNumberOption(option => option.setName('scrim-time').setDescription('Set a time for your scrim. All times in CET, so something like 20 or 21.').setRequired(true))
-
 		.addUserOption(option => option.setName('user-one').setDescription('Add a user to mention in the schedule!').setRequired(true))
 
 		.addUserOption(option => option.setName('user-second').setDescription('Add a user to mention in the schedule!'))
@@ -100,8 +98,9 @@ module.exports = {
 
 		];
 
-		// const time = interaction.options.getNumber('scrim-time');
-
+		/**
+		 * @type {string} - 1-8 All users mentioned in the schedule.
+		 */
 		const userOne = interaction.options.getMember('user-one');
 
 		const userSecond = interaction.options.getMember('user-second');
@@ -120,29 +119,6 @@ module.exports = {
 
 		const OptionalScrimDescription = interaction.options.getString('description');
 
-		// if (time < 0 || time > 24) {
-
-		// 	interaction.reply('Your time input was invalid! All times are in CET, so `20` or `21`.');
-		// 	return;
-
-		// };
-
-		/* ------------------------------------ TIME CALCULATION ---------------------------------------------------------*/
-
-		// const ScrimDate = new Date();
-		// const SendDate = new Date();
-
-
-		// const newDate = ScrimDate.setHours(time, 0, 0, 0);
-		// const DateToSend = SendDate.setHours(time, -15, 0, 0);
-
-		// const UnixTime = Math.floor(newDate / 1000); // countdown until scrim
-		// const DateToSendInUnix = Math.floor(DateToSend / 1000); //time to send the message
-
-		// console.log("Date to send", DateToSendInUnix);
-
-		/* ------------------------------------ TIME CALCULATION ---------------------------------------------------------*/
-
 		try {
 
 			ScrimDescripton.push(OptionalScrimDescription);
@@ -151,6 +127,7 @@ module.exports = {
 
 			console.log(e);
 			ScrimDescripton.push('React to change your availability!');
+
 		};
 
 		if (OptionalScrimDescription == ">" || !OptionalScrimDescription) {
@@ -304,7 +281,7 @@ module.exports = {
 		let team = `${interaction.channel.parent.name}`; // get category name
 
 		const ScheduleEmbed = new MessageEmbed()
-			.setTitle(`${team}'s Schedule`)
+			.setTitle(`${team}'s Schedule`) //⏰ <t:${UnixTime}:R> for time
 			.setDescription(UserMessages)
 			.setColor('GREYPLE')
 			.setFooter({
@@ -317,13 +294,16 @@ module.exports = {
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const NotAbleToReactEmbed = new MessageEmbed()
-			//eligible
 			.setDescription(`> Your User ID doesn't appear on the following list: SCHEDULE_USER_ID_ARRAY `)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const NotAbleToDeleteEmbed = new MessageEmbed()
-			//eligible
 			.setDescription(`> Only the creator of this schedule , ${interaction.member.user.username}, can use this!`)
+			.setColor('DARK_BUT_NOT_BLACK')
+
+		const DMOptionsEmbed = new MessageEmbed()
+			.setTitle('Choose your option')
+			.setDescription(`What do you want to do with the schedule in ${interaction.channel} ?`)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const Buttons = new MessageActionRow()
@@ -347,9 +327,9 @@ module.exports = {
 			)
 			.addComponents(
 				new MessageButton()
-				.setCustomId('ButEdit')
-				.setLabel('Save')
-				.setStyle("SUCCESS")
+				.setCustomId('ButManage')
+				.setLabel('Manage schedule')
+				.setStyle("PRIMARY")
 			)
 			.addComponents(
 				new MessageButton()
@@ -382,7 +362,7 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
-				const savecollector = sentMessage.createMessageComponentCollector({
+				const ManageScheduleCollector = sentMessage.createMessageComponentCollector({
 					componentType: 'BUTTON'
 				});
 
@@ -396,7 +376,7 @@ module.exports = {
 
 				// 		interaction.channel.send(`${MentionMessage} this is your reminder for the scrim <t:${UnixTime}:R> \n \n Was this reminder correct? **If not**, please DM <@420277395036176405> and tell him!`);
 				// 		clearInterval(timer);
-				// 		console.log('Message sent - inzterval destroyed!');
+				// 		console.log('Message sent - interval destroyed!');
 
 				// 	};
 
@@ -816,9 +796,9 @@ module.exports = {
 
 				});
 
-				savecollector.on('collect', async i => {
+				ManageScheduleCollector.on('collect', async i => {
 
-					if (i.customId === "ButEdit") {
+					if (i.customId === "ButManage") {
 
 						if (i.user.id !== interaction.member.user.id) {
 							i.reply({
@@ -829,112 +809,166 @@ module.exports = {
 								ephemeral: true
 							})
 							return;
-						}
+						};
 
-						if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
+						const Options = new MessageActionRow()
+							.addComponents(
+								new MessageButton()
+								.setCustomId('ButSave')
+								.setLabel('Save this schedule')
+								.setStyle('SECONDARY'),
+							)
+							.addComponents(
+								new MessageButton()
+								.setCustomId('ButDisableReminder')
+								.setLabel('Disable reminder')
+								.setStyle('SECONDARY'),
+							)
 
-							i.reply({
-								content: "Your schedule needs to include at least 6 people!",
-								ephemeral: true
+						i.reply({
+							content: "I sent you a DM!",
+							ephemeral: true
+						});
+
+						i.member.send({
+							embeds: [
+								DMOptionsEmbed
+							],
+							components: [
+								Options
+							],
+						}).then(sentMessage => {
+
+							const SaveCollector = sentMessage.createMessageComponentCollector({
+								componentType: 'BUTTON'
 							});
-							return;
-						};
 
-						let UserSeventhString = ("");
-						let UserSeventhIDString = ("");
-						let UserEighthString = ("");
-						let UserEighthIDString = ("");
+							const DisableCollector = sentMessage.createMessageComponentCollector({
+								componentType: 'BUTTON'
+							});
 
-						if (userSeventh) {
+							SaveCollector.on('collect', async i => {
 
-							UserSeventhString = `${userSeventh}`;
-							UserSeventhIDString = `${userSeventh.user.id}`;
+								if (i.customId === "ButSave") {
 
-						} else {
+									if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
 
-							UserSeventhString = "-";
-							UserSeventhIDString = "-";
-						};
+										i.reply({
+											content: "Your schedule is not eligible for saving! It needs to fill out at least all 6 player slots!",
+										});
+										return;
+									};
 
-						if (userEighth) {
+									let UserSeventhString = ("");
+									let UserSeventhIDString = ("");
+									let UserEighthString = ("");
+									let UserEighthIDString = ("");
 
-							UserEighthString = `${userEighth}`;
-							UserEighthIDString = `${userEighth.user.id}`;
+									if (userSeventh) {
 
-						} else {
+										UserSeventhString = `${userSeventh}`;
+										UserSeventhIDString = `${userSeventh.user.id}`;
 
-							UserEighthString = "-";
-							UserEighthIDString = "-";
-						};
+									} else {
+
+										UserSeventhString = "-";
+										UserSeventhIDString = "-";
+									};
+
+									if (userEighth) {
+
+										UserEighthString = `${userEighth}`;
+										UserEighthIDString = `${userEighth.user.id}`;
+
+									} else {
+
+										UserEighthString = "-";
+										UserEighthIDString = "-";
+									};
 
 
-						const NewScheduleData = {
-							ScheduleCreator: `${interaction.member}`,
-							ScheduleCreatorID: `${interaction.member.user.id}`,
-							userOneJson: `${userOne}`,
-							userOneIDJson: `${userOne.user.id}`,
-							userSecondJson: `${userSecond}`,
-							userSecondIDJson: `${userSecond.user.id}`,
-							userThirdJson: `${userThird}`,
-							userThirdIDJson: `${userThird.user.id}`,
-							userFourthJson: `${userFourth}`,
-							userFourthIDJson: `${userFourth.user.id}`,
-							userFithJson: `${userFith}`,
-							userFithIDJson: `${userFith.user.id}`,
-							userSixthJson: `${userSixth}`,
-							userSixthIDJson: `${userSixth.user.id}`,
-							userSeventhJson: `${UserSeventhString}`,
-							userSeventhIDJson: `${UserSeventhIDString}`,
-							userEighthJson: `${UserEighthString}`,
-							userEighthIDJson: `${UserEighthIDString}`,
-							ScrimDescriptonJson: `${ScrimDescripton}`,
-							InteractionChannelJson: `${interaction.channel}`
-						};
+									const NewScheduleData = {
+										ScheduleCreator: `${interaction.member}`,
+										ScheduleCreatorID: `${interaction.member.user.id}`,
+										userOneJson: `${userOne}`,
+										userOneIDJson: `${userOne.user.id}`,
+										userSecondJson: `${userSecond}`,
+										userSecondIDJson: `${userSecond.user.id}`,
+										userThirdJson: `${userThird}`,
+										userThirdIDJson: `${userThird.user.id}`,
+										userFourthJson: `${userFourth}`,
+										userFourthIDJson: `${userFourth.user.id}`,
+										userFithJson: `${userFith}`,
+										userFithIDJson: `${userFith.user.id}`,
+										userSixthJson: `${userSixth}`,
+										userSixthIDJson: `${userSixth.user.id}`,
+										userSeventhJson: `${UserSeventhString}`,
+										userSeventhIDJson: `${UserSeventhIDString}`,
+										userEighthJson: `${UserEighthString}`,
+										userEighthIDJson: `${UserEighthIDString}`,
+										ScrimDescriptonJson: `${ScrimDescripton}`,
+										InteractionChannelJson: `${interaction.channel}`
+									};
 
-						let JSONuserMessage =
-							`Hey there ${i.user.username} 👋` + "\n" +
-							"You just saved this schedule:" + "\n" + "\n" +
-							`Description: ${ScrimDescripton}` + "\n" +
-							`First User: ${userOne}` + "\n" +
-							`Second User: ${userSecond}` + "\n" +
-							`Third User: ${userThird}` + "\n" +
-							`Fourth User: ${userFourth}` + "\n" +
-							`Fith User: ${userFith}` + "\n" +
-							`Sixth User: ${userSixth}` + "\n" +
-							`Seventh User: ${UserSeventhString}` + "\n" +
-							`Eighth User: ${UserEighthString}` + "\n" + "\n" +
-							`If you use /schedulepreset now, this will be your schedule!` + "\n" + "\n" +
-							`🥰 Your 2ez Bot!` + "\n" + "\n" +
-							`Your File: **Schedule_${interaction.channel.parent.name}.json**` + "\n" +
-							`Access: **${interaction.channel.parent.name}** through **${interaction.member.user.username}**`;
+									let JSONuserMessage =
+										`Hey there ${i.user.username} 👋` + "\n" +
+										"You just saved this schedule:" + "\n" + "\n" +
+										`Description: ${ScrimDescripton}` + "\n" +
+										`First User: ${userOne}` + "\n" +
+										`Second User: ${userSecond}` + "\n" +
+										`Third User: ${userThird}` + "\n" +
+										`Fourth User: ${userFourth}` + "\n" +
+										`Fith User: ${userFith}` + "\n" +
+										`Sixth User: ${userSixth}` + "\n" +
+										`Seventh User: ${UserSeventhString}` + "\n" +
+										`Eighth User: ${UserEighthString}` + "\n" + "\n" +
+										`If you use /schedulepreset now, this will be your schedule!` + "\n" + "\n" +
+										`🥰 Your 2ez Bot!` + "\n" + "\n" +
+										`Your File: **Schedule_${interaction.channel.parent.name}.json**` + "\n" +
+										`Access: **${interaction.channel.parent.name}** through **${interaction.member.user.username}**`;
 
-						fs.writeFile(`Schedule_${interaction.channel.parent.name}.json`, JSON.stringify(NewScheduleData, null, 2), async (err) => {
+									fs.writeFile(`Schedule_${interaction.channel.parent.name}.json`, JSON.stringify(NewScheduleData, null, 2), async (err) => {
 
-							if (err) {
+										if (err) {
 
-								i.reply(`Something didnt work! Check the error for more info: ${err}`);
-								console.log(err);
-								return;
+											i.reply(`Something didnt work! Check the error for more info: ${err}`);
+											console.log(err);
+											return;
 
-							} else {
+										} else {
 
-								await i.reply({
-									content: `Your data has been saved successfully. Your file: **${interaction.channel.parent.name}.json**. For more info, check your DMs!`,
-									ephemeral: true
-								});
-								console.log(`Saved Schedule Data in: Schedule_${interaction.channel.parent.name}.json`);
+											await i.reply({
+												content: `Your data has been saved successfully. Your file: **${interaction.channel.parent.name}.json**. For more info, check your DMs!`,
+											});
+											console.log(`Saved Schedule Data in: Schedule_${interaction.channel.parent.name}.json`);
 
-								i.user.send(JSONuserMessage).catch((e) => {
+											i.channel.send(JSONuserMessage).catch((e) => {
 
-									console.log(`Couldnt send the message! Error: ${e}`);
+												console.log(`Couldnt send the message! Error: ${e}`);
 
-								})
+											});
 
-							}
+										};
+
+									});
+
+								};
+
+							});
+
+							DisableCollector.on('collect', async i => {
+
+								if (i.customId === "ButDisableReminder") {
+
+									i.reply("Ok, you will not recieve notifications for this schedule.");
+
+								};
+
+							});
 
 						});
 
-					}
+					};
 
 				});
 
