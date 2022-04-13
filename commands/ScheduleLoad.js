@@ -14,6 +14,8 @@ const {
 } = require('discord.js');
 
 const fs = require('fs');
+const nodeCron = require('node-cron');
+var cron = require('node-cron');
 
 //This code has been written by me, Marwin!
 
@@ -35,7 +37,6 @@ module.exports = {
 		// 	return;
 
 		// }
-
 
 		let Check_User_Array = [
 
@@ -81,7 +82,14 @@ module.exports = {
 
 		];
 
+		/**
+		 * @type {Array} - This is the array that will hold the reminder cron schedule
+		 */
+		const url_taskMap = {}
+
 		let team = interaction.channel.parent.name // get category name
+
+		const Schedulename = (`Schedule_${interaction.channel.parent.name}.json`);
 
 		let yesEmoji = "<:2ez_Schedule_Yes:933802728130494524>";
 		let noEmoji = "<:2ez_Schedule_No:933803257120313406>";
@@ -100,13 +108,13 @@ module.exports = {
 			.setColor('DARK_BUT_NOT_BLACK');
 
 		const DeletedSchedulePreset = new MessageEmbed()
-			.setDescription(`> Your Preset has been deleted!`)
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> Your Preset has been deleted!`)
+			.setColor('GREEN')
 			.setFooter({
 				text: `Deleted: ${interaction.channel.parent.name}.json!`
 			});
 
 		const NotAbleToReactEmbed = new MessageEmbed()
-			//eligible
 			.setDescription(`> Your User ID does not appear on the following list: **Check_User_ID_Array** `)
 			.setColor('DARK_BUT_NOT_BLACK');
 
@@ -118,8 +126,13 @@ module.exports = {
 			.setDescription(`This is only available to the person who saved the schedule!`)
 			.setColor('DARK_BUT_NOT_BLACK')
 
-		const SuccesfullyEditedEmbed = new MessageEmbed()
-			.setDescription('> Successfully changed your availability!')
+		const DisableRemindersEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
+			.setColor('GREEN');
+
+		const DMOptionsEmbed = new MessageEmbed()
+			.setTitle('Choose your option')
+			.setDescription(`What do you want to do with the schedule in ${interaction.channel} ?`)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		fs.readFile(`Schedule_${interaction.channel.parent.name}.json`, 'utf-8', async (err, jsonString, ) => {
@@ -277,9 +290,9 @@ module.exports = {
 						)
 						.addComponents(
 							new MessageButton()
-							.setCustomId('ButDestroyP')
-							.setLabel('Destroy Preset')
-							.setStyle("SUCCESS")
+							.setCustomId('ButManage')
+							.setLabel('Manage schedule')
+							.setStyle("PRIMARY")
 						)
 						.addComponents(
 							new MessageButton()
@@ -312,7 +325,7 @@ module.exports = {
 								componentType: 'BUTTON'
 							});
 
-							const DestroyPcollector = sentMessage.createMessageComponentCollector({
+							const ManageScheduleCollector = sentMessage.createMessageComponentCollector({
 								componentType: 'BUTTON'
 							});
 
@@ -320,7 +333,22 @@ module.exports = {
 								componentType: 'BUTTON'
 							});
 
-							console.log('Created Collectors / Sent message!');
+							var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
+
+								interaction.channel.send(`${MentionMessage.toString().replace(/,/g, ' ')} here is your reminder for the scrim in 15 Minutes!`);
+
+							});
+
+							url_taskMap['url'] = reminderschedule;
+							let reminders = url_taskMap['url'];
+
+							var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
+
+								reminders.stop();
+
+							});
+
+							console.log('Created Collectors / Sent message / Set reminder');
 
 							yescollector.on('collect', i => {
 
@@ -397,6 +425,19 @@ module.exports = {
 											User_Fith_Array.push(`${yesEmoji} ${data.userFithJson}`);
 
 										};
+
+									} catch {
+
+									};
+
+									try {
+
+										if (i.member.user.id == data.userSixthIDJson) {
+
+											User_Sixth_Array.pop();
+											User_Sixth_Array.push(`${yesEmoji} ${data.userSixthJson}`)
+
+										}
 
 									} catch {
 
@@ -725,62 +766,142 @@ module.exports = {
 
 							//fs.unlink()
 
-							DestroyPcollector.on('collect', i => {
+							ManageScheduleCollector.on('collect', async i => {
 
-								if (i.customId === "ButDestroyP") {
+								if (i.customId === "ButManage") {
 
-									if (i.user.id !== data.ScheduleCreatorID) {
+									if (i.user.id !== interaction.member.user.id) {
 										i.reply({
 											content: "You are not able to use this!",
 											embeds: [
-												OnlyScheduleCreatorEmbed
+												NotAbleToDeleteEmbed
 											],
 											ephemeral: true
 										})
 										return;
-									}
-
-									try {
-
-										fs.unlink(`Schedule_${interaction.channel.parent.name}.json`, async (err) => {
-
-											if (err) {
-
-												i.reply({
-													content: `${err}`,
-													embeds: [
-														DidntDeleteSchedulePreset
-													],
-													ephemeral: true
-												})
-
-												return;
-
-											} else {
-
-												console.log(`${i.member.user.username} destroyed the Saved Schedule for ${interaction.channel.parent.name}`);
-
-												i.reply({
-													embeds: [
-														DeletedSchedulePreset
-													],
-													ephemeral: true
-												})
-
-											}
-
-										})
-
-									} catch {
-
-										i.reply(`Error / ID : BAD_UNLINK_REQUEST / 9`)
-										return;
-
 									};
 
+									const Options = new MessageActionRow()
+										.addComponents(
+											new MessageButton()
+											.setCustomId('ButDestroy')
+											.setLabel('Destroy Preset')
+											.setStyle('SECONDARY'),
+										)
+										.addComponents(
+											new MessageButton()
+											.setCustomId('ButDisableReminder')
+											.setLabel('Disable reminder')
+											.setStyle('SECONDARY'),
+										)
 
+									i.reply({
+										content: "I sent you a DM!",
+										ephemeral: true
+									});
 
-								}
+									i.member.send({
+										embeds: [
+											DMOptionsEmbed
+										],
+										components: [
+											Options
+										],
+									}).then(sentMessage => {
+
+										const DestroyCollector = sentMessage.createMessageComponentCollector({
+											componentType: 'BUTTON'
+										});
+
+										const DisableCollector = sentMessage.createMessageComponentCollector({
+											componentType: 'BUTTON'
+										});
+
+										DestroyCollector.on('collect', async i => {
+
+											if (i.customId === "ButDestroy") {
+
+												if (i.user.id !== data.ScheduleCreatorID) {
+													i.reply({
+														content: "You are not able to use this!",
+														embeds: [
+															OnlyScheduleCreatorEmbed
+														],
+														ephemeral: true
+													})
+													return;
+												};
+
+												try {
+
+													fs.unlink(Schedulename, async (err) => {
+
+														if (err) {
+
+															i.reply({
+																content: `${err}`,
+																embeds: [
+																	DidntDeleteSchedulePreset
+																],
+																ephemeral: true
+															})
+
+															return;
+
+														} else {
+
+															console.log(`${i.user.tag} destroyed the Saved Schedule for ${interaction.channel.parent.name}`);
+
+															i.reply({
+																embeds: [
+																	DeletedSchedulePreset
+																],
+																ephemeral: true
+															})
+
+														}
+
+													})
+
+												} catch {
+
+													i.reply(`Error / ID : BAD_UNLINK_REQUEST / 9`)
+													return;
+
+												};
+
+											};
+
+										});
+
+										DisableCollector.on('collect', async i => {
+
+											if (i.customId === "ButDisableReminder") {
+
+												try {
+
+													reminders.stop();
+
+												} catch {
+
+													i.reply("Something went wrong! Please try again!");
+													return;
+
+												};
+
+												i.reply({
+													embeds: [
+														DisableRemindersEmbed
+													],
+												});
+
+											};
+
+										});
+
+									});
+
+								};
 
 							});
 
@@ -823,10 +944,14 @@ module.exports = {
 
 										MentionMessage.pop();
 
+										closereminders.stop();
+
+										reminders.stop();
+
 									} catch {
 
 										const embed = new MessageEmbed()
-											.setDescription('Error ID: `BAD_ARRAY_POP / 9 ` Contact the Dev if you see this!')
+											.setDescription('Error ID: `BAD_UNLINK_REQUEST/ 9 ` Contact the Dev if you see this!')
 											.setColor('RED')
 
 										i.reply({
