@@ -14,6 +14,8 @@ const {
 } = require('discord.js');
 
 const fs = require('fs');
+const nodeCron = require('node-cron');
+var cron = require('node-cron');
 
 //This code has been written by me, Marwin!
 
@@ -53,6 +55,16 @@ module.exports = {
 		// 	return;
 
 		// }
+
+		const NonValidChannels = ["Social", "Server"]
+
+		if (NonValidChannels.includes(interaction.channel.parent.name)) {
+			interaction.reply({
+				content: "This command is not available in this category!",
+				ephemeral: true
+			})
+			return;
+		};
 
 		let Check_User_Array = [
 
@@ -97,6 +109,11 @@ module.exports = {
 		let MentionMessage = [
 
 		];
+
+		/**
+		 * @type {Array} - This is the array that will hold the reminder cron schedule
+		 */
+		const url_taskMap = {}
 
 		/**
 		 * @type {string} - 1-8 All users mentioned in the schedule.
@@ -281,7 +298,7 @@ module.exports = {
 		let team = `${interaction.channel.parent.name}`; // get category name
 
 		const ScheduleEmbed = new MessageEmbed()
-			.setTitle(`${team}'s Schedule`) //⏰ <t:${UnixTime}:R> for time
+			.setTitle(`${team}'s Schedule`)
 			.setDescription(UserMessages)
 			.setColor('GREYPLE')
 			.setFooter({
@@ -305,6 +322,10 @@ module.exports = {
 			.setTitle('Choose your option')
 			.setDescription(`What do you want to do with the schedule in ${interaction.channel} ?`)
 			.setColor('DARK_BUT_NOT_BLACK')
+
+		const DisableRemindersEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
+			.setColor('GREEN');
 
 		const Buttons = new MessageActionRow()
 			.addComponents(
@@ -370,17 +391,20 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
-				// var timer = setInterval(function () {
+				var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 18 * * * - Set a cron schedule for the bot to send reminders to the users.
 
-				// 	if (Math.round(new Date() / 1000) >= DateToSendInUnix) {
+					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
 
-				// 		interaction.channel.send(`${MentionMessage} this is your reminder for the scrim <t:${UnixTime}:R> \n \n Was this reminder correct? **If not**, please DM <@420277395036176405> and tell him!`);
-				// 		clearInterval(timer);
-				// 		console.log('Message sent - interval destroyed!');
+				});
 
-				// 	};
+				url_taskMap['url'] = reminderschedule;
+				let reminders = url_taskMap['url'];
 
-				// }, 120 * 1000);
+				var closereminders = nodeCron.schedule('47 17 * * *', () => { //45 18 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
+
+					reminders.stop();
+
+				});
 
 				yescollector.on('collect', i => {
 
@@ -960,7 +984,22 @@ module.exports = {
 
 								if (i.customId === "ButDisableReminder") {
 
-									i.reply("Ok, you will not recieve notifications for this schedule.");
+									try {
+
+										reminders.stop();
+
+									} catch {
+
+										i.reply("Something went wrong! Please try again!");
+										return;
+
+									};
+
+									i.reply({
+										embeds: [
+											DisableRemindersEmbed
+										],
+									});
 
 								};
 
@@ -969,7 +1008,7 @@ module.exports = {
 						});
 
 					};
-
+				
 				});
 
 				deletecollector.on('collect', i => {
@@ -1010,6 +1049,10 @@ module.exports = {
 							ScrimDescripton.pop();
 
 							MentionMessage.pop();
+
+							reminders.stop();
+
+							closereminders.stop();
 
 						} catch {
 

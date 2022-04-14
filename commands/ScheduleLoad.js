@@ -38,6 +38,16 @@ module.exports = {
 
 		// }
 
+		const NonValidChannels = ["Social", "Server"]
+
+		if (NonValidChannels.includes(interaction.channel.parent.name)) {
+			interaction.reply({
+				content: "This command is not available in this category!",
+				ephemeral: true
+			})
+			return;
+		};
+
 		let Check_User_Array = [
 
 		];

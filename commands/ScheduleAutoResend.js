@@ -41,7 +41,16 @@ module.exports = {
 
 		// }
 
-		
+		const NonValidChannels = ["Social", "Server"]
+
+		if (NonValidChannels.includes(interaction.channel.parent.name)) {
+			interaction.reply({
+				content: "This command is not available in this category!",
+				ephemeral: true
+			})
+			return;
+		};
+
 		let DayString = ("");
 		let IntAuhtor = interaction.member.id;
 		let SendChannel = interaction.channel;
@@ -87,11 +96,16 @@ module.exports = {
 
 		];
 
+		/**
+		 * @type {Array<string>}  
+		 * @author Marwin
+		 * @reason This includes all the players that are in the preset schedule
+		 */
 		let MentionMessage = [
 
 		];
 
-		
+
 
 		const SendingDays = interaction.options.getString('days');
 		let team = interaction.channel.parent.name // get category name
@@ -183,7 +197,7 @@ module.exports = {
 
 		console.log(`Set an automatic schedule in ${interaction.channel.parent.name} - Author: ${interaction.member.user.username}`);
 
-		var autoschedule = cron.schedule('0 8 * * *', () => { //0 9 * * *
+		var autoschedule = cron.schedule('0 8 * * *', () => { //0 8 * * *
 
 			let date = new Date();
 			let day = date.toLocaleString('en-gb', {
@@ -369,9 +383,9 @@ module.exports = {
 							componentType: 'BUTTON'
 						});
 
-						var reminderschedule = cron.schedule('45 17 * * *', () => { //45 18 * * *
+						var reminderschedule = cron.schedule('45 17 * * *', () => { //45 17 * * *
 
-							SendChannel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+							SendChannel.send(`${MentionMessage.toString().replace(/,/g, ' ')} here is your reminder for the scrim in 15 Minutes!`);
 
 							console.log('Sent reminder message!');
 
@@ -383,7 +397,6 @@ module.exports = {
 						var closereminders = cron.schedule('47 17 * * *', () => { //45 18 * * *
 
 							reminders.stop();
-							console.log('Stopped reminder!');
 
 						});
 
@@ -819,6 +832,7 @@ module.exports = {
 								try {
 
 									autoschedule.stop();
+									reminders.stop();
 
 									i.reply({
 										embeds: [
