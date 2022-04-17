@@ -113,7 +113,8 @@ module.exports = {
 		/**
 		 * @type {Array} - This is the array that will hold the reminder cron schedule
 		 */
-		const url_taskMap = {}
+		const url_taskMap = {};
+		const NormalStopReminder = {};
 
 		/**
 		 * @type {string} - 1-8 All users mentioned in the schedule.
@@ -327,6 +328,20 @@ module.exports = {
 			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
 			.setColor('GREEN');
 
+		const SuccesfullyDelayedReminder1Embed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> I will send a reminder for this schedule tomorrow!`)
+			.setFooter({
+				text: "The reminder for today has been stopped!"
+			})
+			.setColor('GREEN');
+
+		const SuccesfullyDelayedReminder2Embed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> I will send a reminder for this schedule in two days!`)
+			.setFooter({
+				text: "The reminder for today has been stopped!"
+			})
+			.setColor('GREEN');
+
 		const Buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
@@ -391,20 +406,39 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
-				var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 18 * * * - Set a cron schedule for the bot to send reminders to the users.
+				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
+				var reminderschedule = nodeCron.schedule('* * * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
 					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-
+				}, {
+					scheduled: true
 				});
 
-				url_taskMap['url'] = reminderschedule;
-				let reminders = url_taskMap['url'];
+				var ReminderTomorrow = nodeCron.schedule('*/2 * * * *', () => { //45 17 */2 * * - Every 2 days at 17:45
+
+					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+					console.log(`Sent reminder 1`);
+
+				}, {
+					scheduled: false //Set this to false so the reminder doesn't start right away.
+				});
+
+				var ReminderIn2Days = nodeCron.schedule('*/3 * * * *', () => { //45 17 */3 * * - Every 3 days at 17:45
+					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+				}, {
+					scheduled: false
+				});
 
 				var closereminders = nodeCron.schedule('47 17 * * *', () => { //45 18 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
 
-					reminders.stop();
+					reminderschedule.stop();
 
+				}, {
+					scheduled: true
 				});
+
+				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
+
 
 				yescollector.on('collect', i => {
 
@@ -840,13 +874,25 @@ module.exports = {
 								new MessageButton()
 								.setCustomId('ButSave')
 								.setLabel('Save this schedule')
-								.setStyle('SECONDARY'),
+								.setStyle('SUCCESS'),
+							)
+							.addComponents(
+								new MessageButton()
+								.setCustomId('ButDelay1')
+								.setLabel('Remind tomorrow')
+								.setStyle('PRIMARY'),
+							)
+							.addComponents(
+								new MessageButton()
+								.setCustomId('ButDelay2')
+								.setLabel('Remind in 2 days')
+								.setStyle('PRIMARY'),
 							)
 							.addComponents(
 								new MessageButton()
 								.setCustomId('ButDisableReminder')
 								.setLabel('Disable reminder')
-								.setStyle('SECONDARY'),
+								.setStyle('DANGER'),
 							)
 
 						i.reply({
@@ -864,6 +910,14 @@ module.exports = {
 						}).then(sentMessage => {
 
 							const SaveCollector = sentMessage.createMessageComponentCollector({
+								componentType: 'BUTTON'
+							});
+
+							const DelaybyOneCollector = sentMessage.createMessageComponentCollector({
+								componentType: 'BUTTON'
+							});
+
+							const DelaybyTwoCollector = sentMessage.createMessageComponentCollector({
 								componentType: 'BUTTON'
 							});
 
@@ -980,17 +1034,63 @@ module.exports = {
 
 							});
 
+							DelaybyOneCollector.on('collect', async i => {
+
+								if (i.customId === "ButDelay1") {
+
+									reminderschedule.stop();
+									closereminders.stop();
+									ReminderTomorrow.start();
+
+									console.log('Closed normal reminder and started reminder for tomorrow!');
+
+									i.reply({
+										content: "Alright!",
+										embeds: [
+											SuccesfullyDelayedReminder1Embed
+										],
+									});
+
+								};
+
+							});
+
+							DelaybyTwoCollector.on('collect', async i => {
+
+								if (i.customId === "ButDelay2") {
+
+									reminderschedule.stop();
+									closereminders.stop();
+									ReminderIn2Days.start();
+
+									console.log('Closed normal reminder and started reminder for in two days!');
+
+									i.reply({
+										content: "Alright!",
+										embeds: [
+											SuccesfullyDelayedReminder2Embed
+										],
+									});
+
+								};
+
+							});
+
 							DisableCollector.on('collect', async i => {
 
 								if (i.customId === "ButDisableReminder") {
 
 									try {
 
-										reminders.stop();
+										reminderschedule.stop();
+										closereminders.stop();
+										ReminderTomorrow.stop();
+										ReminderIn2Days.stop();
 
-									} catch {
+									} catch (e) {
 
 										i.reply("Something went wrong! Please try again!");
+										console.log(`Something went wrong! Error: ${e}`);
 										return;
 
 									};
@@ -1008,7 +1108,7 @@ module.exports = {
 						});
 
 					};
-				
+
 				});
 
 				deletecollector.on('collect', i => {
