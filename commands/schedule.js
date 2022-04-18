@@ -15,7 +15,6 @@ const {
 
 const fs = require('fs');
 const nodeCron = require('node-cron');
-var cron = require('node-cron');
 
 //This code has been written by me, Marwin!
 
@@ -105,16 +104,15 @@ module.exports = {
 		let ScrimDescripton = [
 
 		];
-
 		let MentionMessage = [
+
 
 		];
 
 		/**
-		 * @type {Array} - This is the array that will hold the reminder cron schedule
+		 * @type {String} - This will store the day the reminder will be send.
 		 */
-		const url_taskMap = {};
-		const NormalStopReminder = {};
+		let ReminderDay = ("*");
 
 		/**
 		 * @type {string} - 1-8 All users mentioned in the schedule.
@@ -274,7 +272,7 @@ module.exports = {
 			console.log(e);
 			return;
 
-		}
+		};
 
 		// ⬇ Description of the embed
 		let UserMessages =
@@ -307,10 +305,6 @@ module.exports = {
 			})
 			.setTimestamp();
 
-		const SuccesfullyEditedEmbed = new MessageEmbed()
-			.setDescription('> Successfully changed your availability!')
-			.setColor('DARK_BUT_NOT_BLACK')
-
 		const NotAbleToReactEmbed = new MessageEmbed()
 			.setDescription(`> Your User ID doesn't appear on the following list: SCHEDULE_USER_ID_ARRAY `)
 			.setColor('DARK_BUT_NOT_BLACK')
@@ -328,18 +322,13 @@ module.exports = {
 			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
 			.setColor('GREEN');
 
-		const SuccesfullyDelayedReminder1Embed = new MessageEmbed()
-			.setDescription(`<:2ezBotV2_YES:951558270340972574> I will send a reminder for this schedule tomorrow!`)
-			.setFooter({
-				text: "The reminder for today has been stopped!"
-			})
-			.setColor('GREEN');
+		const SelectDaysEmbed = new MessageEmbed()
+			.setTitle('When do you want to be notified?')
+			.setDescription("Type 23 to be notified on the 23rd of the month.")
+			.setColor('BLURPLE');
 
-		const SuccesfullyDelayedReminder2Embed = new MessageEmbed()
-			.setDescription(`<:2ezBotV2_YES:951558270340972574> I will send a reminder for this schedule in two days!`)
-			.setFooter({
-				text: "The reminder for today has been stopped!"
-			})
+		const CustomDaysEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> You will be notified on the day you chose!`)
 			.setColor('GREEN');
 
 		const Buttons = new MessageActionRow()
@@ -369,9 +358,9 @@ module.exports = {
 			)
 			.addComponents(
 				new MessageButton()
-				.setCustomId('ButDelete')
-				.setLabel('Delete')
-				.setStyle("DANGER")
+				.setCustomId('ButSelectReminder')
+				.setLabel('Select reminder time')
+				.setStyle("PRIMARY")
 			);
 
 		await interaction.reply(`Here is your schedule for the following users: ${MentionMessage}.`).then(
@@ -402,40 +391,47 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
+				const SelectReminderCollctor = sentMessage.createMessageComponentCollector({
+					componentType: 'BUTTON'
+				});
+
 				const deletecollector = sentMessage.createMessageComponentCollector({
 					componentType: 'BUTTON'
 				});
 
 				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
-				var reminderschedule = nodeCron.schedule('* * * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
+				var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
 					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
 				}, {
 					scheduled: true
 				});
 
-				var ReminderTomorrow = nodeCron.schedule('*/2 * * * *', () => { //45 17 */2 * * - Every 2 days at 17:45
-
-					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-					console.log(`Sent reminder 1`);
-
-				}, {
-					scheduled: false //Set this to false so the reminder doesn't start right away.
-				});
-
-				var ReminderIn2Days = nodeCron.schedule('*/3 * * * *', () => { //45 17 */3 * * - Every 3 days at 17:45
-					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-				}, {
-					scheduled: false
-				});
-
-				var closereminders = nodeCron.schedule('47 17 * * *', () => { //45 18 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
+				var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
 
 					reminderschedule.stop();
 
 				}, {
 					scheduled: true
 				});
+
+				var customreminder = nodeCron.schedule(`${ReminderDay} 21 * * *`, () => { // - Set a cron schedule for the bot to send reminders to the users.
+					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes! - Custom`);
+					console.log(ReminderDay);
+				}, {
+					scheduled: false
+				});
+
+				//TODO: Fix problem that reminders are sent every minute - Prolly problem with replacing *
+				//Delete messages once day has been collected
+				//Make Delete button work
+
+				// var stopcustomreminder = nodeCron.schedule(`${ReminderDay} 21 * * *`, () => { // - Set a cron schedule for the bot to send reminders to the users.
+				// 	interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes! - Custom`);
+				// 	console.log(`Stopped custom reminder`);
+				// }, {
+				// 	scheduled: false
+				// });
 
 				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
@@ -878,22 +874,16 @@ module.exports = {
 							)
 							.addComponents(
 								new MessageButton()
-								.setCustomId('ButDelay1')
-								.setLabel('Remind tomorrow')
-								.setStyle('PRIMARY'),
-							)
-							.addComponents(
-								new MessageButton()
-								.setCustomId('ButDelay2')
-								.setLabel('Remind in 2 days')
-								.setStyle('PRIMARY'),
-							)
-							.addComponents(
-								new MessageButton()
 								.setCustomId('ButDisableReminder')
 								.setLabel('Disable reminder')
 								.setStyle('DANGER'),
 							)
+							.addComponents(
+								new MessageButton()
+								.setCustomId('ButDelete')
+								.setLabel('Delete schedule')
+								.setStyle('DANGER'),
+							);
 
 						i.reply({
 							content: "I sent you a DM!",
@@ -913,15 +903,11 @@ module.exports = {
 								componentType: 'BUTTON'
 							});
 
-							const DelaybyOneCollector = sentMessage.createMessageComponentCollector({
-								componentType: 'BUTTON'
-							});
-
-							const DelaybyTwoCollector = sentMessage.createMessageComponentCollector({
-								componentType: 'BUTTON'
-							});
-
 							const DisableCollector = sentMessage.createMessageComponentCollector({
+								componentType: 'BUTTON'
+							});
+
+							const DeleteCollector = sentMessage.createMessageComponentCollector({
 								componentType: 'BUTTON'
 							});
 
@@ -1034,43 +1020,11 @@ module.exports = {
 
 							});
 
-							DelaybyOneCollector.on('collect', async i => {
+							DeleteCollector.on('collect', async (i) => {
 
-								if (i.customId === "ButDelay1") {
+								if (i.customId === "ButDelete") {
 
-									reminderschedule.stop();
-									closereminders.stop();
-									ReminderTomorrow.start();
-
-									console.log('Closed normal reminder and started reminder for tomorrow!');
-
-									i.reply({
-										content: "Alright!",
-										embeds: [
-											SuccesfullyDelayedReminder1Embed
-										],
-									});
-
-								};
-
-							});
-
-							DelaybyTwoCollector.on('collect', async i => {
-
-								if (i.customId === "ButDelay2") {
-
-									reminderschedule.stop();
-									closereminders.stop();
-									ReminderIn2Days.start();
-
-									console.log('Closed normal reminder and started reminder for in two days!');
-
-									i.reply({
-										content: "Alright!",
-										embeds: [
-											SuccesfullyDelayedReminder2Embed
-										],
-									});
+									i.reply('Deleted!');
 
 								};
 
@@ -1084,12 +1038,11 @@ module.exports = {
 
 										reminderschedule.stop();
 										closereminders.stop();
-										ReminderTomorrow.stop();
-										ReminderIn2Days.stop();
+										customreminder.stop();
 
 									} catch (e) {
 
-										i.reply("Something went wrong! Please try again!");
+										i.reply("Something went wrong! Please try again! If this error doesn't go away, please contact the developer!");
 										console.log(`Something went wrong! Error: ${e}`);
 										return;
 
@@ -1103,6 +1056,67 @@ module.exports = {
 
 								};
 
+							});
+
+						});
+
+					};
+
+				});
+
+				SelectReminderCollctor.on('collect', async i => {
+
+					if (i.customId === "ButSelectReminder") {
+
+						if (i.user.id !== interaction.member.user.id) {
+							i.reply({
+								content: "You are not able to use this!",
+								embeds: [
+									NotAbleToDeleteEmbed
+								],
+								ephemeral: true
+							})
+							return;
+						};
+
+						i.reply({
+							content: "Please enter the date of the day you want to be reminded at.",
+							ephemeral: true
+						});
+
+						interaction.channel.send({
+							embeds: [
+								SelectDaysEmbed
+							]
+						}).then(sentMessage => {
+
+							const collector = i.channel.createMessageCollector({
+								time: 60000
+							});
+
+							collector.on('collect', sentMessage => {
+
+								if (sentMessage.author.id !== i.user.id) return;
+								if (isNaN(sentMessage.content)) return i.channel.send('Please enter a number!');
+								// if (sentMessage.content > 31) return i.channel.send('Please enter a number less than or equal to 31!');
+								var result = (sentMessage.content - Math.floor(sentMessage.content)) !== 0;
+								if (result) return i.channel.send('Please enter a valid number!');
+
+								ReminderDay = (`${ReminderDay.replace("*", `${sentMessage.content}`)}`);
+								customreminder.start();
+
+								console.log(`Started custom reminder!`);
+
+								reminderschedule.stop();
+								closereminders.stop();
+
+								sentMessage.delete();
+
+								i.channel.send({
+									embeds: [
+										CustomDaysEmbed
+									],
+								});
 							});
 
 						});
@@ -1191,13 +1205,9 @@ module.exports = {
 							content: 'Everything has been deleted!',
 							ephemeral: true
 						});
-
 					};
-
 				});
-
-			})
-
-		)
+			}),
+		);
 	},
-}
+};

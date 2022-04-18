@@ -58,7 +58,6 @@ module.exports = {
 		const SmallTeamName = TeamName.toLowerCase();
 
 
-
 		const result = await TeamBlacklistSchema.findOne({
 			"teamname": {
 				$regex: new RegExp(SmallTeamName, "i")
