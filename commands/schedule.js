@@ -405,7 +405,6 @@ module.exports = {
 				});
 
 				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
-
 				var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
 					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
 				}, {
@@ -413,29 +412,23 @@ module.exports = {
 				});
 
 				var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
-
 					reminderschedule.stop();
-
 				}, {
 					scheduled: true
 				});
 
-				var customreminder = nodeCron.schedule(`25 11 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+				var customreminder = nodeCron.schedule(`45 17 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
 					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-					console.log(`Sent custom reminder - 21 11 ${ReminderDay} * *`);
 				}, {
 					scheduled: false
 				});
 
-				var stopcustomreminder = nodeCron.schedule(`26 11 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+				var stopcustomreminder = nodeCron.schedule(`47 17 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
 					customreminder.stop();
-					console.log(`Stopped custom reminder.`);
 				}, {
 					scheduled: false
 				});
-
 				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
-
 
 				yescollector.on('collect', i => {
 
@@ -459,98 +452,56 @@ module.exports = {
 								User_One_Array.pop();
 								User_One_Array.push(`${yesEmoji} ${userOne}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.member.user.id == userSecond.user.id) {
 
 								User_Second_Array.pop();
 								User_Second_Array.push(`${yesEmoji} ${userSecond}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.member.user.id == userThird.user.id) {
 
 								User_Third_Array.pop();
 								User_Third_Array.push(`${yesEmoji} ${userThird}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userFourth.user.id) {
 
 								User_Fourth_Array.pop();
 								User_Fourth_Array.push(`${yesEmoji} ${userFourth}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userFith.user.id) {
 
 								User_Fith_Array.pop();
 								User_Fith_Array.push(`${yesEmoji} ${userFith}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userSixth.user.id) {
 
 								User_Sixth_Array.pop();
 								User_Sixth_Array.push(`${yesEmoji} ${userSixth}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userSeventh.user.id) {
 
 								User_Seventh_Array.pop();
 								User_Seventh_Array.push(`${yesEmoji} ${userSeventh}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userEighth.user.id) {
 
 								User_Eighth_Array.pop();
 								User_Eighth_Array.push(`${yesEmoji} ${userEighth}`)
 
-							}
+							};
 
 						} catch {
 
@@ -568,11 +519,8 @@ module.exports = {
 								ScheduleEmbed
 							],
 						});
-
 						i.deferUpdate();
-
-					}
-
+					};
 				});
 
 				nocollector.on('collect', i => {
@@ -597,98 +545,56 @@ module.exports = {
 								User_One_Array.pop();
 								User_One_Array.push(`${noEmoji} ${userOne}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.member.user.id == userSecond.user.id) {
 
 								User_Second_Array.pop();
 								User_Second_Array.push(`${noEmoji} ${userSecond}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.member.user.id == userThird.user.id) {
 
 								User_Third_Array.pop();
 								User_Third_Array.push(`${noEmoji} ${userThird}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userFourth.user.id) {
 
 								User_Fourth_Array.pop();
 								User_Fourth_Array.push(`${noEmoji} ${userFourth}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userFith.user.id) {
 
 								User_Fith_Array.pop();
 								User_Fith_Array.push(`${noEmoji} ${userFith}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userSixth.user.id) {
 
 								User_Sixth_Array.pop();
 								User_Sixth_Array.push(`${noEmoji} ${userSixth}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userSeventh.user.id) {
 
 								User_Seventh_Array.pop();
 								User_Seventh_Array.push(`${noEmoji} ${userSeventh}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userEighth.user.id) {
 
 								User_Eighth_Array.pop();
 								User_Eighth_Array.push(`${noEmoji} ${userEighth}`)
 
-							}
+							};
 
 						} catch {
 
@@ -706,11 +612,8 @@ module.exports = {
 								ScheduleEmbed
 							],
 						});
-
 						i.deferUpdate();
-
 					};
-
 				});
 
 				idkcollector.on('collect', i => {
@@ -735,98 +638,56 @@ module.exports = {
 								User_One_Array.pop();
 								User_One_Array.push(`${tentativeEmoji} ${userOne}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.member.user.id == userSecond.user.id) {
 
 								User_Second_Array.pop();
 								User_Second_Array.push(`${tentativeEmoji} ${userSecond}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.member.user.id == userThird.user.id) {
 
 								User_Third_Array.pop();
 								User_Third_Array.push(`${tentativeEmoji} ${userThird}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userFourth.user.id) {
 
 								User_Fourth_Array.pop();
 								User_Fourth_Array.push(`${tentativeEmoji} ${userFourth}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userFith.user.id) {
 
 								User_Fith_Array.pop();
 								User_Fith_Array.push(`${tentativeEmoji} ${userFith}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userSixth.user.id) {
 
 								User_Sixth_Array.pop();
 								User_Sixth_Array.push(`${tentativeEmoji} ${userSixth}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userSeventh.user.id) {
 
 								User_Seventh_Array.pop();
 								User_Seventh_Array.push(`${tentativeEmoji} ${userSeventh}`)
 
-							}
-
-						} catch {
-
-						};
-
-						try {
+							};
 
 							if (i.user.id == userEighth.user.id) {
 
 								User_Eighth_Array.pop();
 								User_Eighth_Array.push(`${tentativeEmoji} ${userEighth}`)
 
-							}
+							};
 
 						} catch {
 
@@ -844,11 +705,8 @@ module.exports = {
 								ScheduleEmbed
 							],
 						});
-
 						i.deferUpdate();
-
 					};
-
 				});
 
 				ManageScheduleCollector.on('collect', async i => {
@@ -917,7 +775,6 @@ module.exports = {
 								if (i.customId === "ButSave") {
 
 									if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
-
 										i.reply({
 											content: "Your schedule is not eligible for saving! It needs to fill out at least all 6 player slots!",
 										});
@@ -1160,6 +1017,7 @@ module.exports = {
 							const EmbedReply = sentMessage;
 
 							const collector = i.channel.createMessageCollector({
+								maxProcessed: 1,
 								time: 60000
 							});
 
