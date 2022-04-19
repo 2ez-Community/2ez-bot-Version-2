@@ -331,6 +331,13 @@ module.exports = {
 			.setDescription(`<:2ezBotV2_YES:951558270340972574> You will be notified on the day you chose!`)
 			.setColor('GREEN');
 
+		const SuccessfullyDeletedEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> Your schedule has been deleted!`)
+			.setFooter({
+				text: "All running reminders have been stopped!"
+			})
+			.setColor('GREEN');
+
 		const Buttons = new MessageActionRow()
 			.addComponents(
 				new MessageButton()
@@ -375,6 +382,8 @@ module.exports = {
 
 			}).then(sentMessage => {
 
+				const ScheduleMessage = sentMessage;
+
 				const yescollector = sentMessage.createMessageComponentCollector({
 					componentType: 'BUTTON'
 				});
@@ -395,10 +404,6 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
-				const deletecollector = sentMessage.createMessageComponentCollector({
-					componentType: 'BUTTON'
-				});
-
 				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
 				var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
@@ -415,23 +420,19 @@ module.exports = {
 					scheduled: true
 				});
 
-				var customreminder = nodeCron.schedule(`${ReminderDay} 21 * * *`, () => { // - Set a cron schedule for the bot to send reminders to the users.
-					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes! - Custom`);
-					console.log(ReminderDay);
+				var customreminder = nodeCron.schedule(`25 11 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+					console.log(`Sent custom reminder - 21 11 ${ReminderDay} * *`);
 				}, {
 					scheduled: false
 				});
 
-				//TODO: Fix problem that reminders are sent every minute - Prolly problem with replacing *
-				//Delete messages once day has been collected
-				//Make Delete button work
-
-				// var stopcustomreminder = nodeCron.schedule(`${ReminderDay} 21 * * *`, () => { // - Set a cron schedule for the bot to send reminders to the users.
-				// 	interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes! - Custom`);
-				// 	console.log(`Stopped custom reminder`);
-				// }, {
-				// 	scheduled: false
-				// });
+				var stopcustomreminder = nodeCron.schedule(`26 11 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+					customreminder.stop();
+					console.log(`Stopped custom reminder.`);
+				}, {
+					scheduled: false
+				});
 
 				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
@@ -1011,23 +1012,9 @@ module.exports = {
 												console.log(`Couldnt send the message! Error: ${e}`);
 
 											});
-
 										};
-
 									});
-
 								};
-
-							});
-
-							DeleteCollector.on('collect', async (i) => {
-
-								if (i.customId === "ButDelete") {
-
-									i.reply('Deleted!');
-
-								};
-
 							});
 
 							DisableCollector.on('collect', async i => {
@@ -1053,15 +1040,95 @@ module.exports = {
 											DisableRemindersEmbed
 										],
 									});
-
 								};
-
 							});
 
+							DeleteCollector.on('collect', async (i) => {
+
+								if (i.customId === "ButDelete") {
+
+									if (i.user.id !== interaction.member.user.id) {
+										i.reply({
+											content: "You are not able to use this!",
+											embeds: [
+												NotAbleToDeleteEmbed
+											],
+											ephemeral: true
+										})
+										return;
+									}
+
+									try {
+
+										User_One_Array.pop();
+
+										User_Second_Array.pop();
+
+										User_Third_Array.pop();
+
+										User_Fourth_Array.pop();
+
+										User_Fith_Array.pop();
+
+										User_Sixth_Array.pop();
+
+										User_Seventh_Array.pop();
+
+										User_Eighth_Array.pop();
+
+										ScrimDescripton.pop();
+
+										MentionMessage.pop();
+
+										closereminders.stop();
+
+										reminderschedule.stop();
+
+										customreminder.stop();
+
+										stopcustomreminder.stop();
+
+									} catch {
+
+										const embed = new MessageEmbed()
+											.setDescription('Error ID: `BAD_ARRAY_POP / 9 ` Contact the Dev if you see this!')
+											.setColor('RED');
+
+										i.reply({
+											content: 'Something went wrong...!',
+											embeds: [
+												embed
+											],
+											ephemeral: true
+										});
+										return;
+									};
+
+									//Delete schedule
+
+									ScheduleMessage.delete().catch(() => {
+
+										console.log('Error ID: 10');
+
+									});
+
+									interaction.deleteReply().catch(() => {
+
+										console.log('Error ID: 11 | Interaction could not be deleted!');
+
+									});
+
+									console.log(`Schedule in ${interaction.channel.parent.name} got deleted!`);
+
+									i.reply({
+										embeds: [
+											SuccessfullyDeletedEmbed
+										],
+									});
+								};
+							});
 						});
-
 					};
-
 				});
 
 				SelectReminderCollctor.on('collect', async i => {
@@ -1090,6 +1157,8 @@ module.exports = {
 							]
 						}).then(sentMessage => {
 
+							const EmbedReply = sentMessage;
+
 							const collector = i.channel.createMessageCollector({
 								time: 60000
 							});
@@ -1098,18 +1167,20 @@ module.exports = {
 
 								if (sentMessage.author.id !== i.user.id) return;
 								if (isNaN(sentMessage.content)) return i.channel.send('Please enter a number!');
-								// if (sentMessage.content > 31) return i.channel.send('Please enter a number less than or equal to 31!');
+								if (sentMessage.content > 31) return i.channel.send('Please enter a number less than or equal to 31!');
 								var result = (sentMessage.content - Math.floor(sentMessage.content)) !== 0;
 								if (result) return i.channel.send('Please enter a valid number!');
 
 								ReminderDay = (`${ReminderDay.replace("*", `${sentMessage.content}`)}`);
 								customreminder.start();
+								stopcustomreminder.start();
 
-								console.log(`Started custom reminder!`);
+								console.log(`Started custom reminder! - Day: ${ReminderDay}!`);
 
 								reminderschedule.stop();
 								closereminders.stop();
 
+								EmbedReply.delete();
 								sentMessage.delete();
 
 								i.channel.send({
@@ -1118,92 +1189,6 @@ module.exports = {
 									],
 								});
 							});
-
-						});
-
-					};
-
-				});
-
-				deletecollector.on('collect', i => {
-
-					if (i.customId === "ButDelete") {
-
-						if (i.user.id !== interaction.member.user.id) {
-							i.reply({
-								content: "You are not able to use this!",
-								embeds: [
-									NotAbleToDeleteEmbed
-								],
-								ephemeral: true
-							})
-							return;
-						}
-
-						try {
-
-							//clear all existing arrays for better performence
-
-							User_One_Array.pop();
-
-							User_Second_Array.pop();
-
-							User_Third_Array.pop();
-
-							User_Fourth_Array.pop();
-
-							User_Fith_Array.pop();
-
-							User_Sixth_Array.pop();
-
-							User_Seventh_Array.pop();
-
-							User_Eighth_Array.pop();
-
-							ScrimDescripton.pop();
-
-							MentionMessage.pop();
-
-							reminders.stop();
-
-							closereminders.stop();
-
-						} catch {
-
-							const embed = new MessageEmbed()
-								.setDescription('Error ID: `BAD_ARRAY_INTERVAL_CLEAR / 9 ` Contact the Dev if you see this!')
-								.setColor('RED');
-
-							i.reply({
-								content: 'Something went wrong...!',
-								embeds: [
-									embed
-								],
-								ephemeral: true
-							});
-
-							return;
-						};
-
-						//Delete schedule
-
-						sentMessage.delete().catch(() => {
-
-							console.log('Error ID: 10');
-
-						});
-
-						interaction.deleteReply().catch(() => {
-
-							console.log('Error ID: 11 | Interaction could not be deleted!');
-
-						})
-
-						console.log(`Schedule in ${interaction.channel.parent.name} got deleted! Cleared all intervals!`);
-
-						i.reply({
-							content: 'Everything has been deleted!',
-							ephemeral: true
 						});
 					};
 				});
