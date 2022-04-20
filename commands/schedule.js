@@ -40,6 +40,8 @@ module.exports = {
 
 		.addUserOption(option => option.setName('user-eighth').setDescription('Add a user to mention in the schedule!'))
 
+		.addStringOption(option => option.setName('reminder-date').setDescription('The date of the day you want to be reminded at!'))
+
 		.addStringOption(option => option.setName('description').setDescription('This will be the description of your schedule!')),
 
 	async execute(interaction) {
@@ -112,7 +114,6 @@ module.exports = {
 		/**
 		 * @type {String} - This will store the day the reminder will be send.
 		 */
-		let ReminderDay = ("*");
 
 		/**
 		 * @type {string} - 1-8 All users mentioned in the schedule.
@@ -133,7 +134,59 @@ module.exports = {
 
 		const userEighth = interaction.options.getMember('user-eighth');
 
+		let ReminderDay = interaction.options.getString('reminder-date');
+
 		const OptionalScrimDescription = interaction.options.getString('description');
+
+		if (ReminderDay) { //checks if date is valid
+			if (isNaN(ReminderDay)) return interaction.reply('Please enter a number!');
+			if (ReminderDay > 31) return interaction.reply('Please enter a number less than or equal to 31!');
+			var result = (ReminderDay - Math.floor(ReminderDay)) !== 0;
+			if (result) return interaction.reply('Please enter a valid number!');
+		} else {
+			ReminderDay = "*";
+			interaction.channel.send(`<:Bell:919323958497644544> **New: Add a custom reminder date so you can choose when to be notified!**`);
+		};
+
+		// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
+		var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
+			interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+		}, {
+			scheduled: true
+		});
+
+		var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
+			reminderschedule.stop();
+		}, {
+			scheduled: true
+		});
+
+		var customreminder = nodeCron.schedule(`45 17 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * *- Set a cron schedule for the bot to send reminders to the users.
+			interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+		}, {
+			scheduled: false
+		});
+
+		var stopcustomreminder = nodeCron.schedule(`47 17 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+			customreminder.stop();
+		}, {
+			scheduled: false
+		});
+		// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
+
+		if (ReminderDay !== "*") { //only runs if date isnt default
+
+			customreminder.start();
+			stopcustomreminder.start();
+
+			console.log(`Started custom reminder! - Day: ${ReminderDay}!`);
+
+			reminderschedule.stop();
+			closereminders.stop();
+
+		} else {
+			console.log('Never initalized custom reminder!');
+		};
 
 		try {
 
@@ -322,15 +375,6 @@ module.exports = {
 			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
 			.setColor('GREEN');
 
-		const SelectDaysEmbed = new MessageEmbed()
-			.setTitle('When do you want to be notified?')
-			.setDescription("Type 23 to be notified on the 23rd of the month.")
-			.setColor('BLURPLE');
-
-		const CustomDaysEmbed = new MessageEmbed()
-			.setDescription(`<:2ezBotV2_YES:951558270340972574> You will be notified on the day you chose!`)
-			.setColor('GREEN');
-
 		const SuccessfullyDeletedEmbed = new MessageEmbed()
 			.setDescription(`<:2ezBotV2_YES:951558270340972574> Your schedule has been deleted!`)
 			.setFooter({
@@ -365,9 +409,9 @@ module.exports = {
 			)
 			.addComponents(
 				new MessageButton()
-				.setCustomId('ButSelectReminder')
-				.setLabel('Select reminder time')
-				.setStyle("PRIMARY")
+				.setCustomId('ButDelete')
+				.setLabel('Delete')
+				.setStyle("DANGER")
 			);
 
 		await interaction.reply(`Here is your schedule for the following users: ${MentionMessage}.`).then(
@@ -381,8 +425,6 @@ module.exports = {
 				]
 
 			}).then(sentMessage => {
-
-				const ScheduleMessage = sentMessage;
 
 				const yescollector = sentMessage.createMessageComponentCollector({
 					componentType: 'BUTTON'
@@ -400,35 +442,9 @@ module.exports = {
 					componentType: 'BUTTON'
 				});
 
-				const SelectReminderCollctor = sentMessage.createMessageComponentCollector({
+				const DeleteCollector = sentMessage.createMessageComponentCollector({
 					componentType: 'BUTTON'
 				});
-
-				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
-				var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
-					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-				}, {
-					scheduled: true
-				});
-
-				var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
-					reminderschedule.stop();
-				}, {
-					scheduled: true
-				});
-
-				var customreminder = nodeCron.schedule(`45 17 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
-					interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
-				}, {
-					scheduled: false
-				});
-
-				var stopcustomreminder = nodeCron.schedule(`47 17 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
-					customreminder.stop();
-				}, {
-					scheduled: false
-				});
-				// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
 				yescollector.on('collect', i => {
 
@@ -737,12 +753,6 @@ module.exports = {
 								.setLabel('Disable reminder')
 								.setStyle('DANGER'),
 							)
-							.addComponents(
-								new MessageButton()
-								.setCustomId('ButDelete')
-								.setLabel('Delete schedule')
-								.setStyle('DANGER'),
-							);
 
 						i.reply({
 							content: "I sent you a DM!",
@@ -766,10 +776,6 @@ module.exports = {
 								componentType: 'BUTTON'
 							});
 
-							const DeleteCollector = sentMessage.createMessageComponentCollector({
-								componentType: 'BUTTON'
-							});
-
 							SaveCollector.on('collect', async i => {
 
 								if (i.customId === "ButSave") {
@@ -778,7 +784,9 @@ module.exports = {
 										i.reply({
 											content: "Your schedule is not eligible for saving! It needs to fill out at least all 6 player slots!",
 										});
+									
 										return;
+									
 									};
 
 									let UserSeventhString = ("");
@@ -883,6 +891,7 @@ module.exports = {
 										reminderschedule.stop();
 										closereminders.stop();
 										customreminder.stop();
+										stopcustomreminder.stop();
 
 									} catch (e) {
 
@@ -899,98 +908,12 @@ module.exports = {
 									});
 								};
 							});
-
-							DeleteCollector.on('collect', async (i) => {
-
-								if (i.customId === "ButDelete") {
-
-									if (i.user.id !== interaction.member.user.id) {
-										i.reply({
-											content: "You are not able to use this!",
-											embeds: [
-												NotAbleToDeleteEmbed
-											],
-											ephemeral: true
-										})
-										return;
-									}
-
-									try {
-
-										User_One_Array.pop();
-
-										User_Second_Array.pop();
-
-										User_Third_Array.pop();
-
-										User_Fourth_Array.pop();
-
-										User_Fith_Array.pop();
-
-										User_Sixth_Array.pop();
-
-										User_Seventh_Array.pop();
-
-										User_Eighth_Array.pop();
-
-										ScrimDescripton.pop();
-
-										MentionMessage.pop();
-
-										closereminders.stop();
-
-										reminderschedule.stop();
-
-										customreminder.stop();
-
-										stopcustomreminder.stop();
-
-									} catch {
-
-										const embed = new MessageEmbed()
-											.setDescription('Error ID: `BAD_ARRAY_POP / 9 ` Contact the Dev if you see this!')
-											.setColor('RED');
-
-										i.reply({
-											content: 'Something went wrong...!',
-											embeds: [
-												embed
-											],
-											ephemeral: true
-										});
-										return;
-									};
-
-									//Delete schedule
-
-									ScheduleMessage.delete().catch(() => {
-
-										console.log('Error ID: 10');
-
-									});
-
-									interaction.deleteReply().catch(() => {
-
-										console.log('Error ID: 11 | Interaction could not be deleted!');
-
-									});
-
-									console.log(`Schedule in ${interaction.channel.parent.name} got deleted!`);
-
-									i.reply({
-										embeds: [
-											SuccessfullyDeletedEmbed
-										],
-									});
-								};
-							});
 						});
 					};
 				});
+				DeleteCollector.on('collect', async (i) => {
 
-				SelectReminderCollctor.on('collect', async i => {
-
-					if (i.customId === "ButSelectReminder") {
+					if (i.customId === "ButDelete") {
 
 						if (i.user.id !== interaction.member.user.id) {
 							i.reply({
@@ -1003,50 +926,71 @@ module.exports = {
 							return;
 						};
 
-						i.reply({
-							content: "Please enter the date of the day you want to be reminded at.",
-							ephemeral: true
+						try {
+
+							User_One_Array.pop();
+
+							User_Second_Array.pop();
+
+							User_Third_Array.pop();
+
+							User_Fourth_Array.pop();
+
+							User_Fith_Array.pop();
+
+							User_Sixth_Array.pop();
+
+							User_Seventh_Array.pop();
+
+							User_Eighth_Array.pop();
+
+							ScrimDescripton.pop();
+
+							MentionMessage.pop();
+
+							closereminders.stop();
+
+							reminderschedule.stop();
+
+							customreminder.stop();
+
+							stopcustomreminder.stop();
+
+						} catch {
+
+							const embed = new MessageEmbed()
+								.setDescription('Error ID: `BAD_ARRAY_POP / 9 ` Contact the Dev if you see this!')
+								.setColor('RED');
+
+							i.reply({
+								content: 'Something went wrong...!',
+								embeds: [
+									embed
+								],
+								ephemeral: true
+							});
+							return;
+						};
+
+						sentMessage.delete().catch(() => {
+
+							console.log('Error ID: 10');
+
 						});
 
-						interaction.channel.send({
+						interaction.deleteReply().catch(() => {
+
+							console.log('Error ID: 11 | Interaction could not be deleted!');
+
+						});
+
+						console.log(`Schedule in ${interaction.channel.parent.name} got deleted!`);
+
+						i.reply({
 							embeds: [
-								SelectDaysEmbed
-							]
-						}).then(sentMessage => {
-
-							const EmbedReply = sentMessage;
-
-							const collector = i.channel.createMessageCollector({
-								maxProcessed: 1,
-								time: 60000
-							});
-
-							collector.on('collect', sentMessage => {
-
-								if (sentMessage.author.id !== i.user.id) return;
-								if (isNaN(sentMessage.content)) return i.channel.send('Please enter a number!');
-								if (sentMessage.content > 31) return i.channel.send('Please enter a number less than or equal to 31!');
-								var result = (sentMessage.content - Math.floor(sentMessage.content)) !== 0;
-								if (result) return i.channel.send('Please enter a valid number!');
-
-								ReminderDay = (`${ReminderDay.replace("*", `${sentMessage.content}`)}`);
-								customreminder.start();
-								stopcustomreminder.start();
-
-								console.log(`Started custom reminder! - Day: ${ReminderDay}!`);
-
-								reminderschedule.stop();
-								closereminders.stop();
-
-								EmbedReply.delete();
-								sentMessage.delete();
-
-								i.channel.send({
-									embeds: [
-										CustomDaysEmbed
-									],
-								});
-							});
+								SuccessfullyDeletedEmbed
+							],
+							ephemeral: true,
 						});
 					};
 				});
