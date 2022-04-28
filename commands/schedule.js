@@ -67,6 +67,14 @@ module.exports = {
 			return;
 		};
 
+		let AllUsersWithEmojis = [
+
+		];
+
+		let YesVoters = [
+
+		];
+
 		let Check_User_Array = [
 
 		];
@@ -112,10 +120,6 @@ module.exports = {
 		];
 
 		/**
-		 * @type {String} - This will store the day the reminder will be send.
-		 */
-
-		/**
 		 * @type {string} - 1-8 All users mentioned in the schedule.
 		 */
 		const userOne = interaction.options.getMember('user-one');
@@ -145,12 +149,37 @@ module.exports = {
 			if (result) return interaction.reply('Please enter a valid number!');
 		} else {
 			ReminderDay = "*";
-			interaction.channel.send(`<:Bell:919323958497644544> **New: Add a custom reminder date so you can choose when to be notified!**`);
 		};
 
 		// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 		var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
-			interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
+
+				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
+
+					if (YesVoters.includes(AllUsersWithEmojis[i])) {
+
+						YesVoters.push("");
+
+					} else {
+
+						YesVoters.push(AllUsersWithEmojis[i]);
+
+					};
+
+				};
+
+			};
+
+			if (YesVoters.length == 0) {
+
+				console.log('Reminder was not sent because no users voted!');
+
+			} else {
+
+				interaction.channel.send(`${YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '')} here is your reminder for the scrim in 15 minutes!`);
+
+			};
 		}, {
 			scheduled: true
 		});
@@ -162,7 +191,33 @@ module.exports = {
 		});
 
 		var customreminder = nodeCron.schedule(`45 17 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * *- Set a cron schedule for the bot to send reminders to the users.
-			interaction.channel.send(`${MentionMessage.toString().replace(',', '')} here is your reminder for the scrim in 15 Minutes!`);
+			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
+
+				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
+
+					if (YesVoters.includes(AllUsersWithEmojis[i])) {
+
+						YesVoters.push("");
+
+					} else {
+
+						YesVoters.push(AllUsersWithEmojis[i]);
+
+					};
+
+				};
+
+			};
+
+			if (YesVoters.length == 0) {
+
+				console.log('Reminder was not sent because no users voted!');
+
+			} else {
+
+				interaction.channel.send(`${YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '')} here is your reminder for the scrim in 15 minutes!`);
+
+			};
 		}, {
 			scheduled: false
 		});
@@ -314,6 +369,7 @@ module.exports = {
 
 			Check_User_Array.push(interaction.member.user.username);
 
+
 			console.log(`Pushed all users in ${interaction.channel.parent.name}!`);
 
 		} catch (e) {
@@ -461,6 +517,8 @@ module.exports = {
 							return;
 						};
 
+						AllUsersWithEmojis.length = 0;
+
 						try {
 
 							if (i.member.user.id == userOne.user.id) {
@@ -523,6 +581,8 @@ module.exports = {
 
 						};
 
+						AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
+
 						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 						ScheduleEmbed.setColor('GREEN');
 						ScheduleEmbed.setFooter({
@@ -553,6 +613,8 @@ module.exports = {
 							})
 							return;
 						};
+
+						AllUsersWithEmojis.length = 0;
 
 						try {
 
@@ -616,6 +678,8 @@ module.exports = {
 
 						};
 
+						AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
+
 						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 						ScheduleEmbed.setColor('RED');
 						ScheduleEmbed.setFooter({
@@ -646,6 +710,8 @@ module.exports = {
 							})
 							return;
 						};
+
+						AllUsersWithEmojis.length = 0;
 
 						try {
 
@@ -708,6 +774,8 @@ module.exports = {
 						} catch {
 
 						};
+
+						AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
 						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 						ScheduleEmbed.setColor('BLURPLE');
@@ -784,9 +852,9 @@ module.exports = {
 										i.reply({
 											content: "Your schedule is not eligible for saving! It needs to fill out at least all 6 player slots!",
 										});
-									
+
 										return;
-									
+
 									};
 
 									let UserSeventhString = ("");
