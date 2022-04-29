@@ -48,6 +48,14 @@ module.exports = {
 			return;
 		};
 
+		let AllUsersWithEmojis = [
+
+		];
+
+		let YesVoters = [
+
+		];
+
 		let Check_User_Array = [
 
 		];
@@ -193,8 +201,6 @@ module.exports = {
 
 					};
 
-					console.log('Check complete!');
-
 					// Push in all users and the neutral emoji!
 					//The following Arrays will be used as the embed Description!
 
@@ -227,10 +233,6 @@ module.exports = {
 
 					};
 
-					console.log('Users Push complete');
-
-					//Push in all the Users, so they get pinged later on!
-
 					MentionMessage.push(data.userOneJson);
 					MentionMessage.push(data.userSecondJson);
 					MentionMessage.push(data.userThirdJson);
@@ -257,8 +259,6 @@ module.exports = {
 						MentionMessage.push(data.userEighthJson);
 
 					};
-
-					console.log('Mention complete!');
 
 					let UserMessages = ScrimDescripton.toString() + "\n" + "\n" +
 						User_One_Array.toString() + "\n" + "\n" +
@@ -345,20 +345,44 @@ module.exports = {
 
 							var reminderschedule = nodeCron.schedule('45 17 * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
 
-								interaction.channel.send(`${MentionMessage.toString().replace(/,/g, ' ')} here is your reminder for the scrim in 15 Minutes!`);
+								for (let i = 0; i < AllUsersWithEmojis.length; i++) {
 
+									if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
+
+										if (YesVoters.includes(AllUsersWithEmojis[i])) {
+
+											YesVoters.push("");
+
+										} else {
+
+											YesVoters.push(AllUsersWithEmojis[i]);
+
+										};
+
+									};
+
+								};
+
+								if (YesVoters.length == 0) {
+
+									console.log('Reminder was not sent because no users voted!');
+
+								} else {
+
+									interaction.channel.send(`${YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '')} here is your reminder for the scrim in 15 minutes!`);
+
+								};
+							}, {
+								scheduled: true
 							});
-
-							url_taskMap['url'] = reminderschedule;
-							let reminders = url_taskMap['url'];
 
 							var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
 
-								reminders.stop();
+								reminderschedule.stop();
 
+							}, {
+								scheduled: true
 							});
-
-							console.log('Created Collectors / Sent message / Set reminder');
 
 							yescollector.on('collect', i => {
 
@@ -375,6 +399,8 @@ module.exports = {
 										return;
 									}
 
+									AllUsersWithEmojis.length = 0;
+
 									try {
 
 										if (i.member.user.id == data.userOneIDJson) {
@@ -384,24 +410,12 @@ module.exports = {
 
 										};
 
-									} catch {
-
-									};
-
-									try {
-
 										if (i.member.user.id == data.userSecondIDJson) {
 
 											User_Second_Array.pop();
 											User_Second_Array.push(`${yesEmoji} ${data.userSecondJson}`);
 
 										};
-
-									} catch {
-
-									};
-
-									try {
 
 										if (i.member.user.id == data.userThirdIDJson) {
 
@@ -410,24 +424,12 @@ module.exports = {
 
 										};
 
-									} catch {
-
-									};
-
-									try {
-
 										if (i.member.user.id == data.userFourthIDJson) {
 
 											User_Fourth_Array.pop();
 											User_Fourth_Array.push(`${yesEmoji} ${data.userFourthJson}`);
 
 										};
-
-									} catch {
-
-									};
-
-									try {
 
 										if (i.member.user.id == data.userFithIDJson) {
 
@@ -436,24 +438,12 @@ module.exports = {
 
 										};
 
-									} catch {
-
-									};
-
-									try {
-
 										if (i.member.user.id == data.userSixthIDJson) {
 
 											User_Sixth_Array.pop();
 											User_Sixth_Array.push(`${yesEmoji} ${data.userSixthJson}`)
 
-										}
-
-									} catch {
-
-									};
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSeventhIDJson) {
 
@@ -461,12 +451,6 @@ module.exports = {
 											User_Seventh_Array.push(`${yesEmoji} ${data.userSeventhJson}`);
 
 										};
-
-									} catch {
-
-									};
-
-									try {
 
 										if (i.member.user.id == data.userEighthIDJson) {
 
@@ -478,6 +462,8 @@ module.exports = {
 									} catch {
 
 									};
+
+									AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
 									ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 									ScheduleEmbed.setColor('GREEN');
@@ -511,7 +497,9 @@ module.exports = {
 											ephemeral: true
 										})
 										return;
-									}
+									};
+
+									AllUsersWithEmojis.length = 0;
 
 									try {
 
@@ -520,78 +508,42 @@ module.exports = {
 											User_One_Array.pop();
 											User_One_Array.push(`${noEmoji} ${data.userOneJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSecondIDJson) {
 
 											User_Second_Array.pop();
 											User_Second_Array.push(`${noEmoji} ${data.userSecondJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userThirdIDJson) {
 
 											User_Third_Array.pop();
 											User_Third_Array.push(`${noEmoji} ${data.userThirdJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userFourthIDJson) {
 
 											User_Fourth_Array.pop();
 											User_Fourth_Array.push(`${noEmoji} ${data.userFourthJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userFithIDJson) {
 
 											User_Fith_Array.pop();
 											User_Fith_Array.push(`${noEmoji} ${data.userFithJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSixthIDJson) {
 
 											User_Sixth_Array.pop();
 											User_Sixth_Array.push(`${noEmoji} ${data.userSixthJson}`)
 
-										}
-
-									} catch {
-
-									};
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSeventhIDJson) {
 
@@ -599,12 +551,6 @@ module.exports = {
 											User_Seventh_Array.push(`${noEmoji} ${data.userSeventhJson}`);
 
 										};
-
-									} catch {
-
-									};
-
-									try {
 
 										if (i.member.user.id == data.userEighthIDJson) {
 
@@ -616,6 +562,8 @@ module.exports = {
 									} catch {
 
 									};
+
+									AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
 									ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 									ScheduleEmbed.setColor('RED');
@@ -649,7 +597,9 @@ module.exports = {
 											ephemeral: true
 										})
 										return;
-									}
+									};
+
+									AllUsersWithEmojis.length = 0;
 
 									try {
 
@@ -658,78 +608,42 @@ module.exports = {
 											User_One_Array.pop();
 											User_One_Array.push(`${tentativeEmoji} ${data.userOneJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSecondIDJson) {
 
 											User_Second_Array.pop();
 											User_Second_Array.push(`${tentativeEmoji} ${data.userSecondJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userThirdIDJson) {
 
 											User_Third_Array.pop();
 											User_Third_Array.push(`${tentativeEmoji} ${data.userThirdJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userFourthIDJson) {
 
 											User_Fourth_Array.pop();
 											User_Fourth_Array.push(`${tentativeEmoji} ${data.userFourthJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userFithIDJson) {
 
 											User_Fith_Array.pop();
 											User_Fith_Array.push(`${tentativeEmoji} ${data.userFithJson}`)
 
-										}
-
-									} catch {
-
-									}
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSixthIDJson) {
 
 											User_Sixth_Array.pop();
 											User_Sixth_Array.push(`${tentativeEmoji} ${data.userSixthJson}`)
 
-										}
-
-									} catch {
-
-									};
-
-									try {
+										};
 
 										if (i.member.user.id == data.userSeventhIDJson) {
 
@@ -737,12 +651,6 @@ module.exports = {
 											User_Seventh_Array.push(`${tentativeEmoji} ${data.userSeventhJson}`);
 
 										};
-
-									} catch {
-
-									};
-
-									try {
 
 										if (i.member.user.id == data.userEighthIDJson) {
 
@@ -754,6 +662,8 @@ module.exports = {
 									} catch {
 
 									};
+
+									AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
 									ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 									ScheduleEmbed.setColor('BLURPLE');
@@ -770,7 +680,7 @@ module.exports = {
 
 									i.deferUpdate();
 
-								}
+								};
 
 							});
 
@@ -867,11 +777,9 @@ module.exports = {
 																	DeletedSchedulePreset
 																],
 																ephemeral: true
-															})
-
-														}
-
-													})
+															});
+														};
+													});
 
 												} catch {
 
@@ -879,9 +787,7 @@ module.exports = {
 													return;
 
 												};
-
 											};
-
 										});
 
 										DisableCollector.on('collect', async i => {
@@ -890,7 +796,8 @@ module.exports = {
 
 												try {
 
-													reminders.stop();
+													reminderschedule.stop();
+													closereminders.stop();
 
 												} catch {
 
@@ -904,15 +811,10 @@ module.exports = {
 														DisableRemindersEmbed
 													],
 												});
-
 											};
-
 										});
-
 									});
-
 								};
-
 							});
 
 							deletecollector.on('collect', i => {
@@ -956,7 +858,7 @@ module.exports = {
 
 										closereminders.stop();
 
-										reminders.stop();
+										reminderschedule.stop();
 
 									} catch {
 
@@ -973,7 +875,7 @@ module.exports = {
 										});
 
 										return;
-									}
+									};
 
 									//Delete schedule
 
@@ -987,20 +889,16 @@ module.exports = {
 
 										console.log('Error ID: 11');
 
-									})
+									});
 
 									i.reply({
 										content: 'Everything has been deleted!',
 										ephemeral: true
 									});
-
-								}
-
+								};
 							});
-
 						}),
-
-					)
+					);
 
 				} catch (err) {
 
@@ -1008,8 +906,7 @@ module.exports = {
 					interaction.reply('Something went wrong! Error ID: 2');
 					return;
 				}
-
-			}
-		})
+			};
+		});
 	},
 };
