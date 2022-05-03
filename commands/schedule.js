@@ -75,6 +75,10 @@ module.exports = {
 
 		];
 
+		let WillNotPingArray = [
+
+		];
+
 		let Check_User_Array = [
 
 		];
@@ -171,13 +175,17 @@ module.exports = {
 
 			};
 
-			if (YesVoters.length == 0) {
+			let PrepareReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '');
 
-				console.log('Reminder was not sent because no users voted!');
+			let RealReminder = PrepareReminder.toString().replace(`${WillNotPingArray}`, '');
+
+			if (RealReminder.length == 0) {
+
+				console.log('Reminder was not sent because either no users were mentioned or no users voted yes!');
 
 			} else {
 
-				interaction.channel.send(`${YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '')} here is your reminder for the scrim in 15 minutes!`);
+				interaction.channel.send(`${RealReminder.toString().replace(/,/g, '')} here is your reminder for the scrim in 15 minutes!`);
 
 			};
 		}, {
@@ -209,13 +217,17 @@ module.exports = {
 
 			};
 
-			if (YesVoters.length == 0) {
+			let PrepareReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '');
 
-				console.log('Reminder was not sent because no users voted!');
+			let RealReminder = PrepareReminder.toString().replace(`${WillNotPingArray}`, '');
+
+			if (RealReminder.length == 0) {
+
+				console.log('Reminder was not sent because either no users were mentioned or no users voted yes!');
 
 			} else {
 
-				interaction.channel.send(`${YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '')} here is your reminder for the scrim in 15 minutes!`);
+				interaction.channel.send(`${RealReminder.toString().replace(/,/g, '')} here is your reminder for the scrim in 15 minutes!`);
 
 			};
 		}, {
@@ -375,8 +387,7 @@ module.exports = {
 		} catch (e) {
 
 			interaction.reply({
-				content: "Something didn't work...",
-				ephemeral: true
+				content: "Oops, something went wrong! Please try again!",
 			})
 			console.log(e);
 			return;
@@ -427,8 +438,12 @@ module.exports = {
 			.setDescription(`What do you want to do with the schedule in ${interaction.channel} ?`)
 			.setColor('DARK_BUT_NOT_BLACK')
 
-		const DisableRemindersEmbed = new MessageEmbed()
-			.setDescription(`<:2ezBotV2_YES:951558270340972574> You won't be notified for this schedule!`)
+		const DisableReminderForEveryoneEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> I won't send a reminder for this schedule!`)
+			.setColor('GREEN');
+
+		const DisableReminderForYouEmbed = new MessageEmbed()
+			.setDescription(`<:2ezBotV2_YES:951558270340972574> I won't ping you for this schedule!`)
 			.setColor('GREEN');
 
 		const SuccessfullyDeletedEmbed = new MessageEmbed()
@@ -817,10 +832,10 @@ module.exports = {
 							)
 							.addComponents(
 								new MessageButton()
-								.setCustomId('ButDisableReminder')
-								.setLabel('Disable reminder')
+								.setCustomId('ButManageReminder')
+								.setLabel('Manage reminder')
 								.setStyle('DANGER'),
-							)
+							);
 
 						i.reply({
 							content: "I sent you a DM!",
@@ -840,7 +855,7 @@ module.exports = {
 								componentType: 'BUTTON'
 							});
 
-							const DisableCollector = sentMessage.createMessageComponentCollector({
+							const ManageReminderCollector = sentMessage.createMessageComponentCollector({
 								componentType: 'BUTTON'
 							});
 
@@ -950,35 +965,90 @@ module.exports = {
 								};
 							});
 
-							DisableCollector.on('collect', async i => {
+							ManageReminderCollector.on('collect', async i => {
 
-								if (i.customId === "ButDisableReminder") {
+								const ReminderOptions = new MessageActionRow()
+									.addComponents(
+										new MessageButton()
+										.setCustomId('ButDisableReminderForYou')
+										.setLabel('Disable for you')
+										.setStyle('DANGER'),
+									)
+									.addComponents(
+										new MessageButton()
+										.setCustomId('ButDisableReminderForEveryone')
+										.setLabel('Disable for everyone')
+										.setStyle('DANGER'),
+									);
 
-									try {
+								i.channel.send({
+									content: "What do you want to do?",
+									components: [
+										ReminderOptions
+									],
+								}).then(sentMessage => {
 
-										reminderschedule.stop();
-										closereminders.stop();
-										customreminder.stop();
-										stopcustomreminder.stop();
-
-									} catch (e) {
-
-										i.reply("Something went wrong! Please try again! If this error doesn't go away, please contact the developer!");
-										console.log(`Something went wrong! Error: ${e}`);
-										return;
-
-									};
-
-									i.reply({
-										embeds: [
-											DisableRemindersEmbed
-										],
+									const DisableReminderForYou = sentMessage.createMessageComponentCollector({
+										componentType: 'BUTTON'
 									});
-								};
+
+									const DisableReminderForEveryone = sentMessage.createMessageComponentCollector({
+										componentType: 'BUTTON'
+									});
+
+									DisableReminderForYou.on('collect', async i => {
+
+										if (i.customId === 'ButDisableReminderForYou') {
+
+											WillNotPingArray.push(`${i.user}`);
+
+											console.log(`${i.user.username} wont be notified for this schedule!`);
+
+											i.reply({
+												embeds: [
+													DisableReminderForYouEmbed
+												]
+											});
+
+										};
+
+									});
+
+									DisableReminderForEveryone.on('collect', async i => {
+
+										if (i.customId === "ButDisableReminderForEveryone") {
+
+											console.log(`${i.user.username} has disabled the reminder for everyone!`);
+
+											try {
+
+												reminderschedule.stop();
+												closereminders.stop();
+												customreminder.stop();
+												stopcustomreminder.stop();
+
+											} catch (e) {
+
+												i.reply("Something went wrong! Please try again! If this error doesn't go away, please contact the developer!");
+												console.log(`Something went wrong! Error: ${e}`);
+												return;
+
+											};
+
+											i.reply({
+												embeds: [
+													DisableReminderForEveryoneEmbed
+												],
+											});
+										};
+									});
+								});
+								i.deferUpdate();
 							});
 						});
 					};
 				});
+
 				DeleteCollector.on('collect', async (i) => {
 
 					if (i.customId === "ButDelete") {
