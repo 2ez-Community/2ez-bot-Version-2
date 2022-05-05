@@ -812,13 +812,12 @@ module.exports = {
 
 					if (i.customId === "ButManage") {
 
-						if (i.user.id !== interaction.member.user.id) {
+						if (!Check_User_Array.includes(i.user.username)) {
 							i.reply({
-								content: "You are not able to use this!",
+								content: "You are not able to react here!",
 								embeds: [
-									NotAbleToDeleteEmbed
+									NotAbleToReactEmbed
 								],
-								ephemeral: true
 							})
 							return;
 						};
@@ -862,6 +861,16 @@ module.exports = {
 							SaveCollector.on('collect', async i => {
 
 								if (i.customId === "ButSave") {
+
+									if (i.user.id !== interaction.member.user.id) {
+										i.reply({
+											content: "You are not able to use this!",
+											embeds: [
+												NotAbleToDeleteEmbed
+											],
+										})
+										return;
+									};
 
 									if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
 										i.reply({
@@ -967,83 +976,108 @@ module.exports = {
 
 							ManageReminderCollector.on('collect', async i => {
 
-								const ReminderOptions = new MessageActionRow()
-									.addComponents(
-										new MessageButton()
-										.setCustomId('ButDisableReminderForYou')
-										.setLabel('Disable for you')
-										.setStyle('DANGER'),
-									)
-									.addComponents(
-										new MessageButton()
-										.setCustomId('ButDisableReminderForEveryone')
-										.setLabel('Disable for everyone')
-										.setStyle('DANGER'),
-									);
+								if (i.customId === "ButManageReminder") {
 
-								i.channel.send({
-									content: "What do you want to do?",
-									components: [
-										ReminderOptions
-									],
-								}).then(sentMessage => {
+									if (!Check_User_Array.includes(i.user.username)) {
+										i.reply({
+											content: "You are not able to use this!",
+											embeds: [
+												NotAbleToReactEmbed
+											],
+											ephemeral: true
+										})
+										return;
+									};
 
-									const DisableReminderForYou = sentMessage.createMessageComponentCollector({
-										componentType: 'BUTTON'
-									});
+									const ReminderOptions = new MessageActionRow()
+										.addComponents(
+											new MessageButton()
+											.setCustomId('ButDisableReminderForYou')
+											.setLabel('Disable for you')
+											.setStyle('DANGER'),
+										)
+										.addComponents(
+											new MessageButton()
+											.setCustomId('ButDisableReminderForEveryone')
+											.setLabel('Disable for everyone')
+											.setStyle('DANGER'),
+										);
 
-									const DisableReminderForEveryone = sentMessage.createMessageComponentCollector({
-										componentType: 'BUTTON'
-									});
+									i.channel.send({
+										content: "What do you want to do?",
+										components: [
+											ReminderOptions
+										],
+									}).then(sentMessage => {
 
-									DisableReminderForYou.on('collect', async i => {
+										const DisableReminderForYou = sentMessage.createMessageComponentCollector({
+											componentType: 'BUTTON'
+										});
 
-										if (i.customId === 'ButDisableReminderForYou') {
+										const DisableReminderForEveryone = sentMessage.createMessageComponentCollector({
+											componentType: 'BUTTON'
+										});
 
-											WillNotPingArray.push(`${i.user}`);
+										DisableReminderForYou.on('collect', async i => {
 
-											console.log(`${i.user.username} wont be notified for this schedule!`);
+											if (i.customId === 'ButDisableReminderForYou') {
 
-											i.reply({
-												embeds: [
-													DisableReminderForYouEmbed
-												]
-											});
+												WillNotPingArray.push(`${i.user}`);
 
-										};
+												console.log(`${i.user.username} wont be notified for this schedule!`);
 
-									});
-
-									DisableReminderForEveryone.on('collect', async i => {
-
-										if (i.customId === "ButDisableReminderForEveryone") {
-
-											console.log(`${i.user.username} has disabled the reminder for everyone!`);
-
-											try {
-
-												reminderschedule.stop();
-												closereminders.stop();
-												customreminder.stop();
-												stopcustomreminder.stop();
-
-											} catch (e) {
-
-												i.reply("Something went wrong! Please try again! If this error doesn't go away, please contact the developer!");
-												console.log(`Something went wrong! Error: ${e}`);
-												return;
+												i.reply({
+													embeds: [
+														DisableReminderForYouEmbed
+													]
+												});
 
 											};
 
-											i.reply({
-												embeds: [
-													DisableReminderForEveryoneEmbed
-												],
-											});
-										};
+										});
+
+										DisableReminderForEveryone.on('collect', async i => {
+
+											if (i.customId === "ButDisableReminderForEveryone") {
+
+												if (i.user.id !== interaction.member.user.id) {
+													i.reply({
+														content: "You are not able to use this!",
+														embeds: [
+															NotAbleToDeleteEmbed
+														],
+														ephemeral: true
+													})
+													return;
+												};
+
+												console.log(`${i.user.username} has disabled the reminder for everyone!`);
+
+												try {
+
+													reminderschedule.stop();
+													closereminders.stop();
+													customreminder.stop();
+													stopcustomreminder.stop();
+
+												} catch (e) {
+
+													i.reply("Something went wrong! Please try again! If this error doesn't go away, please contact the developer!");
+													console.log(`Something went wrong! Error: ${e}`);
+													return;
+
+												};
+
+												i.reply({
+													embeds: [
+														DisableReminderForEveryoneEmbed
+													],
+												});
+											};
+										});
 									});
-								});
-								i.deferUpdate();
+									i.deferUpdate();
+								};
 							});
 						});
 					};
