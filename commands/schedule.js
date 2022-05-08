@@ -179,13 +179,17 @@ module.exports = {
 
 			let RealReminder = PrepareReminder.toString().replace(`${WillNotPingArray}`, '');
 
+			RealReminder = RealReminder.toString().replace(/,/g, '');
+
+			RealReminder.toString().trim();
+
 			if (RealReminder.length == 0) {
 
 				console.log('Reminder was not sent because either no users were mentioned or no users voted yes!');
 
 			} else {
 
-				interaction.channel.send(`${RealReminder.toString().replace(/,/g, '')} here is your reminder for the scrim in 15 minutes!`);
+				interaction.channel.send(`${RealReminder} here is your reminder for the scrim in 15 minutes!`);
 
 			};
 		}, {
@@ -221,13 +225,17 @@ module.exports = {
 
 			let RealReminder = PrepareReminder.toString().replace(`${WillNotPingArray}`, '');
 
+			RealReminder = RealReminder.toString().replace(/,/g, '');
+
+			RealReminder.toString().trim();
+
 			if (RealReminder.length == 0) {
 
 				console.log('Reminder was not sent because either no users were mentioned or no users voted yes!');
 
 			} else {
 
-				interaction.channel.send(`${RealReminder.toString().replace(/,/g, '')} here is your reminder for the scrim in 15 minutes!`);
+				interaction.channel.send(`${RealReminder} here is your reminder for the scrim in 15 minutes!`);
 
 			};
 		}, {
@@ -426,7 +434,7 @@ module.exports = {
 			.setTimestamp();
 
 		const NotAbleToReactEmbed = new MessageEmbed()
-			.setDescription(`> Your User ID doesn't appear on the following list: SCHEDULE_USER_ID_ARRAY `)
+			.setDescription(`> Your User ID doesn't appear in the following Array: SCHEDULE_USER_ID_ARRAY `)
 			.setColor('DARK_BUT_NOT_BLACK')
 
 		const NotAbleToDeleteEmbed = new MessageEmbed()
@@ -814,11 +822,12 @@ module.exports = {
 
 						if (!Check_User_Array.includes(i.user.username)) {
 							i.reply({
-								content: "You are not able to react here!",
+								content: "You are not able to use this!",
 								embeds: [
 									NotAbleToReactEmbed
 								],
-							})
+								ephemeral: true,
+							});
 							return;
 						};
 
@@ -1046,7 +1055,6 @@ module.exports = {
 														embeds: [
 															NotAbleToDeleteEmbed
 														],
-														ephemeral: true
 													})
 													return;
 												};
