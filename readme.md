@@ -30,7 +30,7 @@ The 2ez Bot V2 uses a number of open source projects to work properly:
 
 ## Credits
 
-> 2ez Bot V2 is a open Source Discord Bot made by Marwin (Discord: Marwin#0001) and Turbo (Discord: Turbo#0806)</span> <br> <br>
+> 2ez Bot V2 is a open Source Discord Bot made by Marwin (Discord: Marwin#0001), Tom(Discord: MajesticCrits#5765) and Turbo (Discord: Turbo#0806)</span> <br> <br>
 > This is the second Version of the bot now running on discord.js Version `^13.3.0` <br> <br>
 > **This Bot was made with ♥ by the 2ez Management Team!**
 
