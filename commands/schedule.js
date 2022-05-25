@@ -175,21 +175,7 @@ module.exports = {
 
 			};
 
-			let PrepareReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '');
-
-			PrepareReminder = PrepareReminder.replace(/,/g, ' ');
-
-			WillNotPingArray = WillNotPingArray.toString().replace(/,/g, ' ');
-
-			console.log(PrepareReminder.toString());
-
-			let RealReminder = PrepareReminder.toString().replace(`${WillNotPingArray}`, '');
-
-			console.log(WillNotPingArray);
-
-			RealReminder = RealReminder.toString().replace(/,/g, '');
-
-			RealReminder.toString().trim();
+			RealReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '').replace(/,/g, ' ').replace(`${WillNotPingArray}`, '').replace(/,/g, '').trim();
 
 			if (RealReminder.length == 0) {
 
@@ -229,13 +215,7 @@ module.exports = {
 
 			};
 
-			let PrepareReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '');
-
-			let RealReminder = PrepareReminder.toString().replace(`${WillNotPingArray}`, '');
-
-			RealReminder = RealReminder.toString().replace(/,/g, '');
-
-			RealReminder.toString().trim();
+			PrepareReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '').replace(/,/g, ' ').replace(`${WillNotPingArray}`, '').replace(/,/g, '').trim();
 
 			if (RealReminder.length == 0) {
 
