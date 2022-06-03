@@ -42,6 +42,8 @@ module.exports = {
 
 		.addStringOption(option => option.setName('reminder-date').setDescription('The date of the day you want to be reminded at!'))
 
+		.addStringOption(option => option.setName('reminder-time').setDescription('The time of the reminder. For example: Entering 17 will send the reminder at 17:45'))
+
 		.addStringOption(option => option.setName('description').setDescription('This will be the description of your schedule!')),
 
 	async execute(interaction) {
@@ -144,10 +146,12 @@ module.exports = {
 
 		let ReminderDay = interaction.options.getString('reminder-date');
 
+		let ReminderTime = interaction.options.getString('reminder-time');
+
 		const OptionalScrimDescription = interaction.options.getString('description');
 
 		if (ReminderDay) { //checks if date is valid
-			if (isNaN(ReminderDay)) return interaction.reply('Please enter a number!');
+			if (isNaN(ReminderDay)) return interaction.reply('This field must be a number! - 17 for sending it on the 17th of the month');
 			if (ReminderDay > 31) return interaction.reply('Please enter a number less than or equal to 31!');
 			var result = (ReminderDay - Math.floor(ReminderDay)) !== 0;
 			if (result) return interaction.reply('Please enter a valid number!');
@@ -155,8 +159,19 @@ module.exports = {
 			ReminderDay = "*";
 		};
 
+		if (ReminderTime) { //checks if time is valid
+			if (isNaN(ReminderTime)) return interaction.reply('The time must be a number!');
+			if (ReminderDay > 24) return interaction.reply('Please enter a number less than or equal to 24!');
+			var result = (ReminderTime - Math.floor(ReminderTime)) !== 0;
+			if (result) return interaction.reply('Please enter a valid number! - 17 for sending the reminder at 17:45');
+		} else {
+			ReminderTime = '19';
+		};
+
+		console.log(`Reminder set at: 45 ${ReminderTime - 2} * * *`);
+
 		// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
-		var reminderschedule = nodeCron.schedule('* * * * *', () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
+		var reminderschedule = nodeCron.schedule(`45 ${ReminderTime - 2} * * *`, () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
 			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
 
 				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
@@ -190,13 +205,13 @@ module.exports = {
 			scheduled: true
 		});
 
-		var closereminders = nodeCron.schedule('47 17 * * *', () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
+		var closereminders = nodeCron.schedule(`47 ${ReminderTime - 2} * * *`, () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
 			reminderschedule.stop();
 		}, {
 			scheduled: true
 		});
 
-		var customreminder = nodeCron.schedule(`45 17 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * *- Set a cron schedule for the bot to send reminders to the users.
+		var customreminder = nodeCron.schedule(`45 ${ReminderTime - 2} ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * *- Set a cron schedule for the bot to send reminders to the users.
 			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
 
 				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
@@ -215,7 +230,7 @@ module.exports = {
 
 			};
 
-			PrepareReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '').replace(/,/g, ' ').replace(`${WillNotPingArray}`, '').replace(/,/g, '').trim();
+			RealReminder = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '').replace(/,/g, ' ').replace(`${WillNotPingArray}`, '').replace(/,/g, '').trim();
 
 			if (RealReminder.length == 0) {
 
@@ -230,14 +245,14 @@ module.exports = {
 			scheduled: false
 		});
 
-		var stopcustomreminder = nodeCron.schedule(`47 17 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+		var stopcustomreminder = nodeCron.schedule(`47 ${ReminderTime - 2} ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
 			customreminder.stop();
 		}, {
 			scheduled: false
 		});
 		// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
 
-		if (ReminderDay !== "*") { //only runs if date isnt default
+		if (ReminderDay !== "*") { //only runs if date isn't default
 
 			customreminder.start();
 			stopcustomreminder.start();
@@ -249,6 +264,12 @@ module.exports = {
 
 		} else {
 			console.log('Never initalized custom reminder!');
+		};
+
+		if (ReminderTime !== "17") { //only runs if time isn't default
+
+			console.log(`Started custom reminder! - Time: ${ReminderTime}!`);
+
 		};
 
 		try {
@@ -392,7 +413,7 @@ module.exports = {
 
 		// ⬇ Description of the embed
 		let UserMessages =
-			(` ${ScrimDescripton.toString()}
+			(` ${ScrimDescripton.toString().replace(/,/g, '')}
 		
 			${User_One_Array.toString()}
 
@@ -594,7 +615,7 @@ module.exports = {
 
 						AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
-						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+						ScheduleEmbed.setDescription(ScrimDescripton.toString().replace(/,/g, '') + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 						ScheduleEmbed.setColor('GREEN');
 						ScheduleEmbed.setFooter({
 							text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
@@ -691,7 +712,7 @@ module.exports = {
 
 						AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
-						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+						ScheduleEmbed.setDescription(ScrimDescripton.toString().replace(/,/g, '') + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 						ScheduleEmbed.setColor('RED');
 						ScheduleEmbed.setFooter({
 							text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
@@ -788,7 +809,7 @@ module.exports = {
 
 						AllUsersWithEmojis.push(User_One_Array.toString(), User_Second_Array.toString(), User_Third_Array.toString(), User_Fourth_Array.toString(), User_Fith_Array.toString(), User_Sixth_Array.toString(), User_Seventh_Array.toString(), User_Eighth_Array.toString());
 
-						ScheduleEmbed.setDescription(ScrimDescripton.toString() + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
+						ScheduleEmbed.setDescription(ScrimDescripton.toString().replace(/,/g, '') + "\n" + "\n" + User_One_Array.toString() + "\n" + "\n" + User_Second_Array.toString() + "\n" + "\n" + User_Third_Array.toString() + "\n" + "\n" + User_Fourth_Array.toString() + "\n" + "\n" + User_Fith_Array.toString() + "\n" + "\n" + User_Sixth_Array.toString() + "\n" + "\n" + User_Seventh_Array.toString() + "\n" + "\n" + User_Eighth_Array.toString());
 						ScheduleEmbed.setColor('BLURPLE');
 						ScheduleEmbed.setFooter({
 							text: `Created by ${interaction.member.user.username} | Latest reaction by ${i.user.username}`
