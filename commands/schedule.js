@@ -42,8 +42,6 @@ module.exports = {
 
 		.addStringOption(option => option.setName('reminder-date').setDescription('The date of the day you want to be reminded at!'))
 
-		.addStringOption(option => option.setName('reminder-time').setDescription('The time of the reminder. For example: Entering 17 will send the reminder at 17:45'))
-
 		.addStringOption(option => option.setName('description').setDescription('This will be the description of your schedule!')),
 
 	async execute(interaction) {
@@ -120,6 +118,7 @@ module.exports = {
 		let ScrimDescripton = [
 
 		];
+
 		let MentionMessage = [
 
 
@@ -146,8 +145,6 @@ module.exports = {
 
 		let ReminderDay = interaction.options.getString('reminder-date');
 
-		let ReminderTime = interaction.options.getString('reminder-time');
-
 		const OptionalScrimDescription = interaction.options.getString('description');
 
 		if (ReminderDay) { //checks if date is valid
@@ -159,19 +156,8 @@ module.exports = {
 			ReminderDay = "*";
 		};
 
-		if (ReminderTime) { //checks if time is valid
-			if (isNaN(ReminderTime)) return interaction.reply('The time must be a number!');
-			if (ReminderDay > 24) return interaction.reply('Please enter a number less than or equal to 24!');
-			var result = (ReminderTime - Math.floor(ReminderTime)) !== 0;
-			if (result) return interaction.reply('Please enter a valid number! - 17 for sending the reminder at 17:45');
-		} else {
-			ReminderTime = '19';
-		};
-
-		console.log(`Reminder set at: 45 ${ReminderTime - 2} * * *`);
-
 		// -------------------------------------------------- Reminder Schedules --------------------------------------------------// 
-		var reminderschedule = nodeCron.schedule(`45 ${ReminderTime - 2} * * *`, () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
+		var reminderschedule = nodeCron.schedule(`45 17 * * *`, () => { //45 17 * * * - Set a cron schedule for the bot to send reminders to the users.
 			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
 
 				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
@@ -205,13 +191,53 @@ module.exports = {
 			scheduled: true
 		});
 
-		var closereminders = nodeCron.schedule(`47 ${ReminderTime - 2} * * *`, () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
-			reminderschedule.stop();
+		var remindercreator = nodeCron.schedule(`* 16 * * *`, () => {
+
+			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
+
+				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
+
+					if (YesVoters.includes(AllUsersWithEmojis[i])) {
+
+						YesVoters.push("");
+
+					} else {
+
+						YesVoters.push(AllUsersWithEmojis[i]);
+
+					};
+
+				};
+
+			};
+
+			CreatorReminderDM = YesVoters.toString().replace(/<:2ez_Schedule_Yes:933802728130494524>/g, '').replace(/,/g, ' ').replace(`${WillNotPingArray}`, '').replace(/,/g, '').trim();
+
+			if (CreatorReminderDM.length == 0) {
+
+				console.log('CreatorReminder was not sent because no users');
+
+			} else {
+
+				interaction.member.send({
+					content: `**For the schedule in ${interaction.channel.name}** \n\n Hey there, just wanted to show you the people who are able to scrim in an hour! \n ${CreatorReminderDM}`,
+				});
+				console.log(`Sent CreatorReminderDM to ${interaction.member.user.username}`);
+
+			};
+
 		}, {
 			scheduled: true
 		});
 
-		var customreminder = nodeCron.schedule(`45 ${ReminderTime - 2} ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * *- Set a cron schedule for the bot to send reminders to the users.
+		var closereminders = nodeCron.schedule(`47 17 * * *`, () => { //47 17 * * * This cron schedule deletes the reminders after the scrim has ended so it's not sent twice.
+			reminderschedule.stop();
+			remindercreator.stop();
+		}, {
+			scheduled: true
+		});
+
+		var customreminder = nodeCron.schedule(`45 17 ${ReminderDay} * *`, () => { // 45 17 ${ReminderDay} * *- Set a cron schedule for the bot to send reminders to the users.
 			for (let i = 0; i < AllUsersWithEmojis.length; i++) {
 
 				if (AllUsersWithEmojis[i].includes(`<:2ez_Schedule_Yes:933802728130494524>`)) {
@@ -245,7 +271,7 @@ module.exports = {
 			scheduled: false
 		});
 
-		var stopcustomreminder = nodeCron.schedule(`47 ${ReminderTime - 2} ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
+		var stopcustomreminder = nodeCron.schedule(`47 17 ${ReminderDay} * *`, () => { //` 47 17 ${ReminderDay} * * - Set a cron schedule for the bot to send reminders to the users.
 			customreminder.stop();
 		}, {
 			scheduled: false
@@ -264,12 +290,6 @@ module.exports = {
 
 		} else {
 			console.log('Never initalized custom reminder!');
-		};
-
-		if (ReminderTime !== "17") { //only runs if time isn't default
-
-			console.log(`Started custom reminder! - Time: ${ReminderTime}!`);
-
 		};
 
 		try {
@@ -1073,6 +1093,7 @@ module.exports = {
 												try {
 
 													reminderschedule.stop();
+													remindercreator.stop();
 													closereminders.stop();
 													customreminder.stop();
 													stopcustomreminder.stop();
@@ -1138,6 +1159,8 @@ module.exports = {
 							MentionMessage.pop();
 
 							closereminders.stop();
+
+							remindercreator.stop();
 
 							reminderschedule.stop();
 
