@@ -287,6 +287,7 @@ module.exports = {
 
 			reminderschedule.stop();
 			closereminders.stop();
+			remindercreator.stop();
 
 		} else {
 			console.log('Never initalized custom reminder!');
@@ -910,19 +911,33 @@ module.exports = {
 										return;
 									};
 
-									if (!userOne || !userSecond || !userThird || !userFourth || !userFith || !userSixth) {
+									if (!userOne || !userSecond || !userThird || !userFourth || !userFith) {
 										i.reply({
-											content: "Your schedule is not eligible for saving! It needs to fill out at least all 6 player slots!",
+											content: "Your schedule is not eligible for saving! It needs to fill out at least all 5 player slots!",
 										});
 
 										return;
 
 									};
 
+									let UserSixthString = ("");
+									let UserSixthIDString = ("");
 									let UserSeventhString = ("");
 									let UserSeventhIDString = ("");
 									let UserEighthString = ("");
 									let UserEighthIDString = ("");
+
+									if (userSixth) {
+
+										UserSixthString = `${userSixth}`;
+										UserSixthIDString = `${userSixth.user.id}`;
+
+									} else {
+
+										UserSixthString = "-";
+										UserSixthIDString = "-";
+
+									};
 
 									if (userSeventh) {
 
@@ -960,8 +975,8 @@ module.exports = {
 										userFourthIDJson: `${userFourth.user.id}`,
 										userFithJson: `${userFith}`,
 										userFithIDJson: `${userFith.user.id}`,
-										userSixthJson: `${userSixth}`,
-										userSixthIDJson: `${userSixth.user.id}`,
+										userSixthJson: `${UserSixthString}`,
+										userSixthIDJson: `${UserSixthIDString}`,
 										userSeventhJson: `${UserSeventhString}`,
 										userSeventhIDJson: `${UserSeventhIDString}`,
 										userEighthJson: `${UserEighthString}`,
@@ -979,7 +994,7 @@ module.exports = {
 										`Third User: ${userThird}` + "\n" +
 										`Fourth User: ${userFourth}` + "\n" +
 										`Fith User: ${userFith}` + "\n" +
-										`Sixth User: ${userSixth}` + "\n" +
+										`Sixth User: ${UserSixthString}` + "\n" +
 										`Seventh User: ${UserSeventhString}` + "\n" +
 										`Eighth User: ${UserEighthString}` + "\n" + "\n" +
 										`If you use /schedulepreset now, this will be your schedule!` + "\n" + "\n" +
@@ -998,7 +1013,7 @@ module.exports = {
 										} else {
 
 											await i.reply({
-												content: `Your data has been saved successfully. Your file: **${interaction.channel.parent.name}.json**. For more info, check your DMs!`,
+												content: `Your data has been saved successfully. Your file: **${interaction.channel.parent.name}.json**.`,
 											});
 											console.log(`Saved Schedule Data in: Schedule_${interaction.channel.parent.name}.json`);
 

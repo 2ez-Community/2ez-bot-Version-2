@@ -4,18 +4,12 @@ const {
 
 const {
 	MessageActionRow,
-	MessageButton
-} = require('discord.js');
-
-const {
 	MessageEmbed,
-	MessageComponentInteraction,
-	MessageReaction
+	MessageButton
 } = require('discord.js');
 
 const fs = require('fs');
 const nodeCron = require('node-cron');
-var cron = require('node-cron');
 
 //This code has been written by me, Marwin!
 
@@ -100,11 +94,6 @@ module.exports = {
 
 		];
 
-		/**
-		 * @type {Array} - This is the array that will hold the reminder cron schedule
-		 */
-		const url_taskMap = {}
-
 		let team = interaction.channel.parent.name // get category name
 
 		const Schedulename = (`Schedule_${interaction.channel.parent.name}.json`);
@@ -181,6 +170,16 @@ module.exports = {
 					Check_User_Array.push(data.userFithIDJson);
 					Check_User_Array.push(data.userSixthIDJson);
 
+					if (data.userSixthJson == "-") {
+
+						Check_User_Array.push(data.userOneIDJson);
+
+					} else {
+
+						Check_User_Array.push(data.userSixthIDJson);
+
+					};
+
 					if (data.userSeventhJson == "-") {
 
 						Check_User_Array.push(data.userOneIDJson);
@@ -211,7 +210,16 @@ module.exports = {
 					User_Third_Array.push(`${neutralEmoji} ${data.userThirdJson}`);
 					User_Fourth_Array.push(`${neutralEmoji} ${data.userFourthJson}`);
 					User_Fith_Array.push(`${neutralEmoji} ${data.userFithJson}`);
-					User_Sixth_Array.push(`${neutralEmoji} ${data.userSixthJson}`);
+
+					if (data.userSixthJson == "-") {
+
+						User_Sixth_Array.push('');
+
+					} else {
+
+						User_Sixth_Array.push(`${neutralEmoji} ${data.userSixthJson}`);
+
+					};
 
 					if (data.userSeventhJson == "-") {
 
@@ -238,7 +246,16 @@ module.exports = {
 					MentionMessage.push(data.userThirdJson);
 					MentionMessage.push(data.userFourthJson);
 					MentionMessage.push(data.userFithJson);
-					MentionMessage.push(data.userSixthJson);
+
+					if (data.userSixthJson == "-") {
+
+						MentionMessage.push('');
+
+					} else {
+
+						MentionMessage.push(data.userSixthJson);
+
+					};
 
 					if (data.userSeventhJson == "-") {
 
