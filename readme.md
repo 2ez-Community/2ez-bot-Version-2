@@ -16,22 +16,23 @@
 # 💎 Features
 
 - Create an easy to use schedule to let your teammates show if they are available or not!
-- Give and remove roles with a simple to use command.
-And much more...
+- Give and remove roles with a simple to use command!
+- Add your team to the 2ez Team Database to make it visable for everyone! And much more...
 
 # 👨‍💻 Tech
 
-The 2ez Bot V2 uses a number of open source projects to work properly:
+The 2ez Bot V2 uses a number of projects to work properly:
 
 - [discord.js] - A powerful Node.js module
-- [node.js] - evented I/O for the backend
+- [node.js] - Evented I/O for the backend
 - [Digital Ocean] - A service to keep the bot online
+- [MongoDB] - An open source NoSQL database
 
 
 ## Credits
 
 > 2ez Bot V2 is a open Source Discord Bot made by Marwin (Discord: Marwin#0001), Tom(Discord: MajesticCrits#5765) and Turbo (Discord: Turbo#0806)</span> <br> <br>
-> This is the second Version of the bot now running on discord.js Version `^13.3.0` <br> <br>
+> This is the second Version of the bot now running on discord.js Version `13.8.1` <br> <br>
 > **This Bot was made with ♥ by the 2ez Management Team!**
 
 
@@ -43,3 +44,4 @@ The 2ez Bot V2 uses a number of open source projects to work properly:
    [Digital Ocean]: <https://www.digitalocean.com/>
    [Ace Editor]: <http://ace.ajax.org>
    [node.js]: <http://nodejs.org>
+   [MongoDB]: <https://www.mongodb.com/>
