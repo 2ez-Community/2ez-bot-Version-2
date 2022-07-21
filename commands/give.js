@@ -22,11 +22,13 @@ module.exports = {
 			const Member = interaction.options.getMember('user');
 			const Role = interaction.options.getRole('role');
 
+			const ValidChannels = ["587956575315034114","991692003593162814"];
+
 			const AlreadyHasMentionedRole = Member.roles.cache.some(role => role === Role);
 
 			if (!interaction.member.permissions.has("MANAGE_ROLES")) {
 
-				if (interaction.channel.id !== "587956575315034114") {
+				if (!ValidChannels.includes(interaction.channel.id)) {
 					let Bad_Channel_Embed = new MessageEmbed()
 						.setDescription(`> You can not use this command in this channel ${interaction.user}!`)
 						.setColor('RED')
@@ -46,15 +48,9 @@ module.exports = {
 
 			if (!interaction.member.permissions.has("MANAGE_ROLES")) {
 
-				console.log(`Didnt have Perms!`);
-
 				if (!interaction.member.roles.cache.some(role => role.name === "Game Admin")) {
 
-					console.log(`Wasnt a Game Admin`);
-
 					if (!interaction.member.roles.cache.some(role => role.name === Role.name)) {
-
-						console.log('Didnt have Role!');
 
 						let DontOwnRoleEmbed = new MessageEmbed()
 							.setDescription(`> You tried to give ${Role}!`)
@@ -68,11 +64,9 @@ module.exports = {
 						})
 						console.log(`Returned ${interaction.member.user.username}'s request!`);
 						return;
-					}
-				}
-			}
-
-
+					};
+				};
+			};
 
 			if (Member.user.id === "902277719180578867") {
 
@@ -162,26 +156,24 @@ module.exports = {
 				dynamic: true
 			});
 
-			let footer = [
-				"Thank you MYSFT#6969 for keeping the bot online!",
-				"Thank you Cointree#8708 for keeping the bot online!",
-				"Thank you Shadowss#5513 for keeping the bot online!",
-				"Thank you MidoriRyuu#1222 for keeping the bot online!",
-				"Thank you hjortsater#0890 for keeping the bot online!",
-				`${Member.user.tag} | ${Member.id}`,
-			];
-
-			const randomFooter = footer[Math.floor(Math.random() * footer.length)];
-
 			const embed = new MessageEmbed()
 				.setTitle(`${Role.name} was given`)
 				.setDescription(`> Gave **${Role.name}** to ${Member} (${Member.user.tag})`)
 				.setThumbnail(memberAvatar)
 				.setColor('RANDOM')
 				.setFooter({
-					text: randomFooter,
+					text: `${Member.user.tag} | ${Member.id}`,
 					iconURL: memberAvatar
 				});
+
+			console.log(interaction.guild.id);
+
+			if (interaction.guild.id == '991691998182514779') {
+
+				Member.roles.add('994970137901932554')
+				interaction.channel.send(`>  I added the **Team Player** role to ${Member.user.username}, as a feature of this server!`)
+
+			};
 
 			return Member.roles.add(Role).catch((e) => {
 
@@ -191,7 +183,6 @@ module.exports = {
 					text: `${Member.user.tag} - Action failed!`
 				});
 				embed.setColor('RED')
-
 			}).then(() => interaction.reply({
 				embeds: [embed]
 			}));
