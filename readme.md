@@ -1,3 +1,5 @@
+**This repo is no longer being updated. If you are a 2ez staff member, DM Marwin#0001 to into the new repo <3** 
+
 # 2ez Bot Version 2
 
 [![N|Solid](https://cdn.discordapp.com/attachments/753693196680429698/891694506343284757/2EZ_animated_transparant.gif)](https://discord.gg/2ezcommunity)
