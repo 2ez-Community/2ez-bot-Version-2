@@ -1,4 +1,4 @@
-**This repo is no longer being updated. If you are a 2ez staff member, DM Marwin#0001 to into the new repo <3** 
+**This repo is no longer being updated. If you are a 2ez staff member, DM Marwin#0001 to get into the new repo <3** 
 
 # 2ez Bot Version 2
 
